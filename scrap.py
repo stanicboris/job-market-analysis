@@ -21,18 +21,26 @@ from selenium.webdriver.common.keys import Keys
 import re
 import time
 from datetime import datetime
+from pymongo import MongoClient
 
 class Scrapper:
     
-    def __init__(self,metier,localisation):
+    def __init__(self,metier,localisation,email):
+        self.email = email
         self.metier = metier
         self.localisation = localisation
-        now = str(datetime.now())
-        self.collection_name = metier+'_'+localisation+'_'+now
+        metier_wo_space = metier.replace(' ','_')
+        self.collection_name = metier_wo_space+'_'+localisation+'_'+email
+        client = MongoClient('localhost', 27017)
+        db = client.test_database
+        test = self.collection_name
+        self.collection = db[test]
 
+        
 
     def addDB(self,line_to_add):
-        print('Feature bientot dispo !')
+        self.collection.insert_one(line_to_add)
+        print(line_to_add,' added to DB : ',self.collection_name)
 
     def scrap(self):
 
@@ -55,13 +63,15 @@ class Scrapper:
         driver.find_element_by_xpath('/html/body/div/div[2]/div[2]/div/form/div[3]/button').click()  # clicker sur rechercher
 
         groupe = 1
-
+        counter = 0
         while True:
             driver.delete_all_cookies()
             while True:
+                
                 results = driver.find_elements_by_class_name('result')
                 len(results)
                 for i in range(0, len(results)):
+                    counter += 1
                     poste = results[i].find_element_by_class_name('jobtitle').text
                     location = results[i].find_element_by_class_name('location').text
                     try:
@@ -81,11 +91,14 @@ class Scrapper:
                     try:
                         resume = driver.find_element_by_xpath('//*[@id="vjs-desc"]').text # récupérer la description
                     except:
-                        resume = 'Unable to get description'
+                        resume = ''
                     line = {'Poste': poste, 'Location': location, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date}
-                    print('Groupe : ', groupe, ' Ligne :', results[i])
-                    df = df.append(line, ignore_index=True)
-                    self.addDB(line)
+                    if self.collection.find_one(line):
+                        print('trouvé dans la Database, suivant !')
+                    else:
+                        self.addDB(line)
+                        df = df.append(line, ignore_index=True)
+                    
                 time.sleep(1)
                 btn_list = driver.find_elements_by_class_name('np')  # liste boutons suivant et precedent
                 len(btn_list)
@@ -115,7 +128,7 @@ class Scrapper:
                 break   
         return df    
 
-parisds = Scrapper('Data scientist','Paris')
+parisds = Scrapper('Data scientist','Paris','anthony93460@gmail.com')
 parisds.scrap()
 
 
