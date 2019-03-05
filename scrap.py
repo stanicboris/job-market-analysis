@@ -20,7 +20,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import re
 import time
-from datetime import datetime
+from datetime import datetime , timedelta
 from pymongo import MongoClient
 
 
@@ -45,23 +45,23 @@ class Scrapper:
         if re.findall(r'heures',str_date):
             nb_heures = re.findall(r'([0-9]) heures',str_date)
             nb_heures = int(nb_heures[0])  
-            duree = datetime.datetime.now() - datetime.timedelta(hours=nb_heures)
+            duree = datetime.now() - timedelta(hours=nb_heures)
             date = duree.date()
         elif re.findall(r'heure',str_date):
             nb_heures = 1
-            duree = datetime.datetime.now() - datetime.timedelta(hours=nb_heures)
+            duree = datetime.now() - timedelta(hours=nb_heures)
             date = duree.date()
         elif re.findall(r'jours',str_date):
             if re.findall(r' ([0-9]) jours',str_date):
-                nb_jours = re.findall(r'([0-9]) jours',str_date)
+                nb_jours = re.findall(r'([0-9]+) jours',str_date)
                 nb_jours = int(nb_jours[0])  
-                duree = datetime.datetime.now() - datetime.timedelta(days=nb_jours)
+                duree = datetime.now() - timedelta(days=nb_jours)
                 date = duree.date()
             else:
-                duree = datetime.datetime.now() - datetime.timedelta(days=30)
+                duree = datetime.now() - timedelta(days=30)
                 date = duree.date()
         elif re.findall(r'jour',str_date):
-            duree = datetime.datetime.now() - datetime.timedelta(days=1)
+            duree = datetime.now() - timedelta(days=1)
             date = duree.date()
         else:
             date = ''
