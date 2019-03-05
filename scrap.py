@@ -120,7 +120,7 @@ class Scrapper:
                     
                     try:
                         poste_clikable.click() # ouvrir la side windows
-                        listener = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, '//*[@id="vjs-desc"]')));
+                        listener = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, '//*[@id="vjs-desc"]')))
                         listener.click()
                         resume = driver.find_element_by_xpath('//*[@id="vjs-desc"]').text # récupérer la description
                     except:
