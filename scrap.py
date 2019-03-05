@@ -160,7 +160,9 @@ parisds = Scrapper('Data scientist','Paris','anthony93460@gmail.com')
 parisds.scrap()
 
 
+df = pd.DataFrame(list(parisds.collection.find()))
 
+df.to_csv('indeed.csv')
 
 
 
