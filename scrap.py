@@ -23,24 +23,23 @@ import time
 from datetime import datetime
 from pymongo import MongoClient
 
+
 class Scrapper:
     
-    def __init__(self,metier,localisation,email):
+    def __init__(self, metier, localisation, email):
         self.email = email
         self.metier = metier
         self.localisation = localisation
-        metier_wo_space = metier.replace(' ','_')
+        metier_wo_space = metier.replace(' ', '_')
         self.collection_name = metier_wo_space+'_'+localisation+'_'+email
         client = MongoClient('localhost', 27017)
         db = client.test_database
         test = self.collection_name
         self.collection = db[test]
 
-        
-
-    def addDB(self,line_to_add):
+    def add_db(self, line_to_add):
         self.collection.insert_one(line_to_add)
-        print(line_to_add,' added to DB : ',self.collection_name)
+        print(line_to_add, ' added to DB : ', self.collection_name)
 
     def scrap(self):
 
@@ -96,7 +95,7 @@ class Scrapper:
                     if self.collection.find_one(line):
                         print('trouvé dans la Database, suivant !')
                     else:
-                        self.addDB(line)
+                        self.add_db(line)
                         df = df.append(line, ignore_index=True)
                     
                 time.sleep(1)
