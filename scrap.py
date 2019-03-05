@@ -18,6 +18,10 @@ ATTENTION : EXPLICATION CHAQUE LIGNE CODE
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 import re
 import time
 from datetime import datetime , timedelta
@@ -30,8 +34,8 @@ class Scrapper:
         self.email = email
         self.metier = metier
         self.localisation = localisation
-        metier_wo_space = metier.replace(' ', '_')
-        self.collection_name = metier_wo_space+'_'+localisation+'_'+email
+        self.counter = 0
+
         client = MongoClient('localhost', 27017)
         db = client.test_database
         test = 'col_indeed_scrap'
@@ -39,7 +43,7 @@ class Scrapper:
 
     def add_db(self, line_to_add):
         self.collection.insert_one(line_to_add)
-        print(line_to_add, ' added to DB : ', self.collection_name)
+        print('Annonce ', self.counter, ' added to DB : ', self.collection)
 
     def process_date(self,str_date):
         if re.findall(r'heures',str_date):
@@ -88,7 +92,7 @@ class Scrapper:
         driver.find_element_by_xpath('/html/body/div/div[2]/div[2]/div/form/div[3]/button').click()  # clicker sur rechercher
 
         groupe = 1
-        counter = 0
+    
         while True:
             driver.delete_all_cookies()
             while True:
@@ -96,8 +100,9 @@ class Scrapper:
                 results = driver.find_elements_by_class_name('result')
                 len(results)
                 for i in range(0, len(results)):
-                    counter += 1
+                    self.counter += 1
                     poste = results[i].find_element_by_class_name('jobtitle').text
+                    poste_clikable = results[i].find_element_by_class_name('jobtitle') 
                     location = results[i].find_element_by_class_name('location').text
                     try:
                         company_elem = results[i].find_element_by_class_name('company').text
@@ -112,9 +117,11 @@ class Scrapper:
                         salary = results[i].find_element_by_class_name('salary').text
                     except:
                         salary = ''
-                    results[i].click() # ouvrir la side windows
-                    time.sleep(2) # attendre pour etre sur que tout soit chargé
+                    
                     try:
+                        poste_clikable.click() # ouvrir la side windows
+                        listener = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, '//*[@id="vjs-desc"]')));
+                        listener.click()
                         resume = driver.find_element_by_xpath('//*[@id="vjs-desc"]').text # récupérer la description
                     except:
                         resume = ''
@@ -148,6 +155,7 @@ class Scrapper:
                     pass
 
             try:
+                time.sleep(2)
                 driver.find_element_by_xpath('/html/body/table[2]/tbody/tr/td/table/tbody/tr/td[2]/p/a').click() #cliker sur autres resultats de recherche
                 groupe += 1
             except:
@@ -155,9 +163,10 @@ class Scrapper:
         return df    
 
 
-
-parisds = Scrapper('Data scientist','Paris','anthony93460@gmail.com')
-parisds.scrap()
+location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpelier']
+for i in range(0,len(location_list)):
+    parisds = Scrapper('Data scientist , data analyst , data engineer , développeur web',location_list[i],'anthony93460@gmail.com')
+    parisds.scrap()
 
 
 df = pd.DataFrame(list(parisds.collection.find()))
