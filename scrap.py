@@ -65,7 +65,7 @@ class Scrapper:
             date = duree.date()
         else:
             date = ''
-        return date
+        return date.strftime("%d/%m/%Y")
 
     def scrap(self):
 
