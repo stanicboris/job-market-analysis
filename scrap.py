@@ -34,7 +34,7 @@ class Scrapper:
         self.collection_name = metier_wo_space+'_'+localisation+'_'+email
         client = MongoClient('localhost', 27017)
         db = client.test_database
-        test = self.collection_name
+        test = 'col_indeed_scrap'
         self.collection = db[test]
 
     def add_db(self, line_to_add):
