@@ -41,6 +41,32 @@ class Scrapper:
         self.collection.insert_one(line_to_add)
         print(line_to_add, ' added to DB : ', self.collection_name)
 
+    def process_date(self,str_date):
+        if re.findall(r'heures',str_date):
+            nb_heures = re.findall(r'([0-9]) heures',str_date)
+            nb_heures = int(nb_heures[0])  
+            duree = datetime.datetime.now() - datetime.timedelta(hours=nb_heures)
+            date = duree.date()
+        elif re.findall(r'heure',str_date):
+            nb_heures = 1
+            duree = datetime.datetime.now() - datetime.timedelta(hours=nb_heures)
+            date = duree.date()
+        elif re.findall(r'jours',str_date):
+            if re.findall(r' ([0-9]) jours',str_date):
+                nb_jours = re.findall(r'([0-9]) jours',str_date)
+                nb_jours = int(nb_jours[0])  
+                duree = datetime.datetime.now() - datetime.timedelta(days=nb_jours)
+                date = duree.date()
+            else:
+                duree = datetime.datetime.now() - datetime.timedelta(days=30)
+                date = duree.date()
+        elif re.findall(r'jour',str_date):
+            duree = datetime.datetime.now() - datetime.timedelta(days=1)
+            date = duree.date()
+        else:
+            date = ''
+        return date
+
     def scrap(self):
 
         profile = webdriver.FirefoxProfile()
@@ -79,6 +105,7 @@ class Scrapper:
                         company_elem = ''
                     try:
                         date = results[i].find_element_by_class_name('date').text
+                        date = self.process_date(date)
                     except:
                         date = ''
                     try:
@@ -126,6 +153,8 @@ class Scrapper:
             except:
                 break   
         return df    
+
+
 
 parisds = Scrapper('Data scientist','Paris','anthony93460@gmail.com')
 parisds.scrap()
