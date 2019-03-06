@@ -170,14 +170,15 @@ class Scrapper:
 
 
 class ScrapThread (threading.Thread):
-    def __init__(self, n):
+    def __init__(self, n,metiers):
         threading.Thread.__init__(self)
         self.n = n
         self.location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpelier']
-
+        self.metiers = metiers
+        
     def run(self):
         print("thread ", self.n)
-        scrappeur = Scrapper(metiers,self.location_list[n],'anthony93460@gmail.com')
+        scrappeur = Scrapper(self.metiers,self.location_list[self.n],'anthony93460@gmail.com')
         scrappeur.scrap()
 
 
@@ -186,13 +187,9 @@ def run():
     metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
     threads = {}
     for i in range(0,len(location_list)):
-        threads['thread'+str(i)] = ScrapThread(i)
+        threads['thread'+str(i)] = ScrapThread(i,metiers)
         threads['thread'+str(i)].start()
         
-
-
-
-
 
 run()
 
