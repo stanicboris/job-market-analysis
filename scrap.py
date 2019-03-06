@@ -129,8 +129,10 @@ class Scrapper:
                     except:
                         resume = ''
                     line = {'Poste': poste, 'Location': location, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date,'Date_scrap':date_scrap}
-                    if self.collection.find({'Resume':resume,'Location':location}):
-                        print('trouvé dans la Database, suivant !')
+                    if self.collection.find_one({'Resume':resume}):
+                        elem_test = self.collection.find_one({'Resume':resume})
+                        if elem_test['Location'] == location:
+                            print('trouvé dans la Database, suivant !')
                     else:
                         self.add_db(line)
                         df = df.append(line, ignore_index=True)
