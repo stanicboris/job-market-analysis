@@ -117,7 +117,7 @@ class Scrapper:
                         salary = results[i].find_element_by_class_name('salary').text
                     except:
                         salary = ''
-                    
+                    date_scrap = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
                     try:
                         poste_clikable.click() # ouvrir la side windows
                         listener = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, '//*[@id="vjs-desc"]')))
@@ -125,7 +125,7 @@ class Scrapper:
                         resume = driver.find_element_by_xpath('//*[@id="vjs-desc"]').text # récupérer la description
                     except:
                         resume = ''
-                    line = {'Poste': poste, 'Location': location, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date}
+                    line = {'Poste': poste, 'Location': location, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date,'Date_scrap':date_scrap}
                     if self.collection.find_one(line):
                         print('trouvé dans la Database, suivant !')
                     else:
