@@ -128,8 +128,32 @@ class preprocessing():
 
         """ Extrait le métier et le statut. Ex : Data Scientist / CDI """
 
+        self.poste = poste.lower()
+        self.resume = resume.lower()
+
+        postes = re.findall(r'(analyst|science|scientist|engineer|ingénieur)', poste)
+        contrats = re.findall(r'(cdd|cdi|intern|stage|stagiaire|internship', resume)
+
+        # Catégorisation métier
+        if 'analyst' in postes:
+            poste = 'Data analyst'
+        elif 'science' or 'scientist' in postes:
+            poste = 'Data scientist'
+        elif 'engineer' or 'ingénieur' in postes:
+            poste = 'Data engineer'
+        else:
+            poste = 'Développeur'
+
+        # Catégorisation contrat
+        if 'cdd' in contrats:
+            contrat = 'CDD'
+        elif 'intern' or 'stage' or 'internship' or 'stagiaire' in contrats:
+            contrat = 'Stage'
+        else:
+            contrat = 'CDI'
+
+        return poste, contrat
 
 
 
-#df['Poste'] = df['Poste'].str.lower()
-#df['Poste'].str.extract(r'(cdi)', expand=False)
+
