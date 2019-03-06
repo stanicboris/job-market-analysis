@@ -141,6 +141,7 @@ class Scrapper:
                     except:
                         driver.refresh()
                         time.sleep(2)
+                        btn_list = driver.find_elements_by_class_name('np')  # liste boutons suivant et precedent
                         btn_list[1].click()  # clicker sur suivant
 
                 elif btn_list[0].text == '« Précédent':  # si il y a que précédent on est arrivé au bout
