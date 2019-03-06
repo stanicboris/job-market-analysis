@@ -43,6 +43,7 @@ class preprocessing():
         # Boucle pour regrouper le bassin d'emploi parisien
         if ville in list('Toulouse', 'Nantes', 'Bordeaux', 'Montpellier', 'Lyon'):
             bassin_emploi = ville
+
         else:
             bassin_emploi = 'Ile-de-France'
 
@@ -85,7 +86,7 @@ class preprocessing():
             duree = datetime.now() - timedelta(days = 1)
             date = duree.date()
 
-        # Missing data
+        # Missing data // à supprimer ?
         else:
             date = ''
 
@@ -97,22 +98,38 @@ class preprocessing():
 
         """ Transforme l'info Indeed en salaire brut /an. """
 
+        salaries = re.findall(r'(\d+ ?\d+)(?= €)', salary)
+        frequency = re.findall(r'(?<=par )(\w+)', salary)
+
+        # Gestion des fourchettes de salaires
+        if len(salaries) >= 2:
+            salary_min = int(pd.to_numeric(salaries[0].replace(" ", "")))
+            salary_max = int(pd.to_numeric(salaries[1].replace(" ", "")))
+            salary = (salary_min+salary_max)/2
+
+        else:
+            salary = int(pd.to_numeric(salaries[0].replace(" ", "")))
+
+        # Gestion de l'échelle
+        if frequency == 'jour':
+            salary = salary * 365
+
+        elif frequency == 'mois':
+            salary = salary * 12
+
+        else:
+            salary = salary
+
+        # Integer
+        return salary
+
+
+    def process_poste(self, poste, resume):
+
+        """ Extrait le métier et le statut. Ex : Data Scientist / CDI """
 
 
 
 
-
-#%% Salary
-#
-#df['salary_min'] = df['Salary'].str.extract(r'([0-9]{2,3} [0-9]{3})(?= €)', expand=False)
-#df['salary_min'] = pd.to_numeric(df['salary_min'].str.replace(" ", ""))
-#
-#df['salary_max'] = df['Salary'].str.extract(r'(?<=- )([0-9]{2,3} [0-9]{3})', expand=False)
-#df['salary_max'] = pd.to_numeric(df['salary_max'].str.replace(" ", ""))
-#
-#df['Frequency'] = df['Salary'].str.extract(r'(?<=par )(\w+)', expand=False)
-#
-#df['salary_mean'] = (df['salary_min']+df['salary_max'])/2
-#
 #df['Poste'] = df['Poste'].str.lower()
 #df['Poste'].str.extract(r'(cdi)', expand=False)
