@@ -26,6 +26,9 @@ import re
 import time
 from datetime import datetime , timedelta
 from pymongo import MongoClient
+import threading
+import time
+
 
 
 class Scrapper:
@@ -47,7 +50,7 @@ class Scrapper:
 
     def process_date(self,str_date):
         if re.findall(r'heures',str_date):
-            nb_heures = re.findall(r'([0-9]) heures',str_date)
+            nb_heures = re.findall(r'([0-9]+) heures',str_date)
             nb_heures = int(nb_heures[0])  
             duree = datetime.now() - timedelta(hours=nb_heures)
             date = duree.date()
@@ -126,7 +129,7 @@ class Scrapper:
                     except:
                         resume = ''
                     line = {'Poste': poste, 'Location': location, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date,'Date_scrap':date_scrap}
-                    if self.collection.find_one(line):
+                    if self.collection.find({'Resume':resume,'Location':location}):
                         print('trouvé dans la Database, suivant !')
                     else:
                         self.add_db(line)
@@ -161,18 +164,42 @@ class Scrapper:
                 groupe += 1
             except:
                 break   
-        return df    
+        return True
 
 
-location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpelier']
-for i in range(0,len(location_list)):
-    parisds = Scrapper('Data scientist , data analyst , data engineer , développeur web',location_list[i],'anthony93460@gmail.com')
-    parisds.scrap()
 
 
-df = pd.DataFrame(list(parisds.collection.find()))
+class ScrapThread (threading.Thread):
+    def __init__(self, n):
+        threading.Thread.__init__(self)
+        self.n = n
+        self.location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpelier']
 
-df.to_csv('indeed.csv')
+    def run(self):
+        print("thread ", self.n)
+        scrappeur = Scrapper(metiers,self.location_list[n],'anthony93460@gmail.com')
+        scrappeur.scrap()
+
+
+def run():
+    location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpelier']
+    metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
+    threads = {}
+    for i in range(0,len(location_list)):
+        threads['thread'+str(i)] = ScrapThread(i)
+        threads['thread'+str(i)].start()
+        
+
+
+
+
+
+run()
+
+
+# df = pd.DataFrame(list(parisds.collection.find()))
+
+# df.to_csv('indeed.csv')
 
 
 
