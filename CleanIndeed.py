@@ -29,7 +29,7 @@ class preprocessing():
 
     def __init__(self, database):
 
-        self.database = database
+        self.database = database()
 
 
     def process_location(self, location):
@@ -101,6 +101,7 @@ class preprocessing():
 
 
 
+
 #%% Salary
 #
 #df['salary_min'] = df['Salary'].str.extract(r'([0-9]{2,3} [0-9]{3})(?= €)', expand=False)
@@ -113,6 +114,5 @@ class preprocessing():
 #
 #df['salary_mean'] = (df['salary_min']+df['salary_max'])/2
 #
-##%%
 #df['Poste'] = df['Poste'].str.lower()
 #df['Poste'].str.extract(r'(cdi)', expand=False)
