@@ -93,9 +93,9 @@ class Scrapper:
             driver.find_element_by_xpath('//*[@id="text-input-where"]').send_keys(Keys.BACKSPACE)  # effacer la localisation pré-ecrite
         driver.find_element_by_xpath('//*[@id="text-input-where"]').send_keys(self.localisation)  # Ecrire dans la barre de localisation
         driver.find_element_by_xpath('/html/body/div/div[2]/div[2]/div/form/div[3]/button').click()  # clicker sur rechercher
-
+        counter = 0
         groupe = 1
-    
+        page = 0
         while True:
             driver.delete_all_cookies()
             while True:
@@ -103,7 +103,8 @@ class Scrapper:
                 results = driver.find_elements_by_class_name('result')
                 len(results)
                 for i in range(0, len(results)):
-                    self.counter += 1
+                    driver.execute_script("arguments[0].scrollIntoView();", results[i])
+                    counter += 1
                     poste = results[i].find_element_by_class_name('jobtitle').text
                     poste_clikable = results[i].find_element_by_class_name('jobtitle') 
                     location = results[i].find_element_by_class_name('location').text
@@ -134,7 +135,12 @@ class Scrapper:
                         if elem_test['Location'] == location:
                             print('trouvé dans la Database, suivant !')
                     else:
-                        self.add_db(line)
+                        
+                        if company_elem == '' and salary == '' and date == '' and poste == '' and location =='':
+                            print('Blank Line ',counter)
+                            continu = input('Continuer')
+                        else:
+                            self.add_db(line)
                         df = df.append(line, ignore_index=True)
                     
                 time.sleep(1)
@@ -143,16 +149,19 @@ class Scrapper:
                 if len(btn_list) > 1:  # si il y a precedent et suivant
                     try:
                         btn_list[1].click()  # clicker sur suivant
+                        page +=1
                     except:
                         driver.refresh()
                         time.sleep(2)
                         btn_list = driver.find_elements_by_class_name('np')  # liste boutons suivant et precedent
                         btn_list[1].click()  # clicker sur suivant
+                        page +=1
 
                 elif btn_list[0].text == '« Précédent':  # si il y a que précédent on est arrivé au bout
                     break
                 else:
                     btn_list[0].click()  # cllicker sur suivant
+                    page +=1
 
                 try:
                     time.sleep(3)  # attendre que la popup s'ouvre
