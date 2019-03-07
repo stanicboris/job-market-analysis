@@ -46,7 +46,7 @@ class Scrapper:
 
     def add_db(self, line_to_add):
         self.collection.insert_one(line_to_add)
-        print('Annonce ', self.counter, ' added to DB : ', self.collection)
+        print('Annonce ', self.counter, ' added to DB  ')
 
     def process_date(self,str_date):
         if re.findall(r'heures',str_date):
@@ -140,6 +140,7 @@ class Scrapper:
                             print('Blank Line ',counter)
                             continu = input('Continuer')
                         else:
+                            print(poste,' ajouté'
                             self.add_db(line)
                         df = df.append(line, ignore_index=True)
                     
