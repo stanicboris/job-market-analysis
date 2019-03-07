@@ -140,7 +140,7 @@ class Scrapper:
                             print('Blank Line ',counter)
                             continu = input('Continuer')
                         else:
-                            print(poste,' ajouté'
+                            print(poste,' ajouté')
                             self.add_db(line)
                         df = df.append(line, ignore_index=True)
                     
