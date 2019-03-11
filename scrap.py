@@ -142,7 +142,7 @@ class Scrapper:
                         else:
                             print(poste,' ajouté')
                             self.add_db(line)
-                        df = df.append(line, ignore_index=True)
+                            #df = df.append(line, ignore_index=True)
                     
                 time.sleep(1)
                 btn_list = driver.find_elements_by_class_name('np')  # liste boutons suivant et precedent
