@@ -16,10 +16,6 @@ pd.options.display.max_columns = None
 
 df = pd.read_csv('indeed.csv', sep=',', index_col='Unnamed: 0')
 
-#%% Exploration : NaN, types d'objets
-df.isna().sum() / len(df) * 100
-df.info()
-
 #%% Class Pre-processing
 
 class preprocessing():
