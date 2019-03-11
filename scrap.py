@@ -170,7 +170,7 @@ class ScrapThread (threading.Thread):
         scrappeur.scrap()
 
 
-def run():
+def startThreads():
     location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpellier']
     metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
     threads = {}
@@ -179,7 +179,7 @@ def run():
         threads['thread'+str(i)].start()
         
 
-run()
+startThreads()
 
 
 # df = pd.DataFrame(list(parisds.collection.find()))
