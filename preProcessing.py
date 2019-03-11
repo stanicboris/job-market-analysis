@@ -149,47 +149,47 @@ class preprocessing():
         return salary
 
 
-def process_poste(poste, resume):
-    
-    """ Extrait le métier et le statut. Ex : Data Scientist / CDI """
-
-    poste = poste.lower()
-    resume = resume.lower()
-
-    postes = re.findall(r'(analyst|analyste|science|scientist|engineer|ingénieur)', poste)
-    contrats = re.findall(r'(cdd|cdi|intern|stage|stagiaire|internship)', resume)
-    
-    if len(postes) >= 1:
-        for i in postes:
-            if i == 'science' or i == 'scientist':
-                poste = 'Data Scientist'
-                break
-            elif i == 'engineer' or i == 'ingénieur':
-                poste = 'Data Engineer'
-                break
-            elif i == 'analyst' or i =='analyste':
-                poste = 'Data Analyst'
-                break
-            else:
-                poste = 'Dev'
-    else:
-        poste = 'Dev'
+    def process_poste(self,poste, resume):
         
-    if len(contrats) >=1:
-        for i in contrats:
-            if i == 'cdd':
-                contrat = 'CDD'
-                break
-            elif i == 'intern' or i == 'stage' or i == 'stagiaire' or i == 'internship':
-                contrat = 'Stage'
-                break
-            else:
-                contrat = 'CDI'
-    else:
-        contrat = 'CDI'
-        
+        """ Extrait le métier et le statut. Ex : Data Scientist / CDI """
 
-    return poste, contrat
+        poste = poste.lower()
+        resume = resume.lower()
+
+        postes = re.findall(r'(analyst|analyste|science|scientist|engineer|ingénieur)', poste)
+        contrats = re.findall(r'(cdd|cdi|intern|stage|stagiaire|internship)', resume)
+        
+        if len(postes) >= 1:
+            for i in postes:
+                if i == 'science' or i == 'scientist':
+                    poste = 'Data Scientist'
+                    break
+                elif i == 'engineer' or i == 'ingénieur':
+                    poste = 'Data Engineer'
+                    break
+                elif i == 'analyst' or i =='analyste':
+                    poste = 'Data Analyst'
+                    break
+                else:
+                    poste = 'Dev'
+        else:
+            poste = 'Dev'
+            
+        if len(contrats) >=1:
+            for i in contrats:
+                if i == 'cdd':
+                    contrat = 'CDD'
+                    break
+                elif i == 'intern' or i == 'stage' or i == 'stagiaire' or i == 'internship':
+                    contrat = 'Stage'
+                    break
+                else:
+                    contrat = 'CDI'
+        else:
+            contrat = 'CDI'
+            
+
+        return poste, contrat
 
 
 
