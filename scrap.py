@@ -171,7 +171,7 @@ class ScrapThread (threading.Thread):
 
 
 def run():
-    location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpelier']
+    location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpellier']
     metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
     threads = {}
     for i in range(0,len(location_list)):
