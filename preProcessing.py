@@ -28,8 +28,8 @@ class preprocessing():
         pour la prédiction et la visualisation. """
 
     def __init__(self):
-
-        
+            
+        self = self
 
 
     def process_location(self, location):
