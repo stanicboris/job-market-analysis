@@ -18,10 +18,17 @@ ATTENTION : EXPLICATION CHAQUE LIGNE CODE
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 import re
 import time
 from datetime import datetime , timedelta
 from pymongo import MongoClient
+import threading
+import time
+
 
 
 class Scrapper:
@@ -30,8 +37,8 @@ class Scrapper:
         self.email = email
         self.metier = metier
         self.localisation = localisation
-        metier_wo_space = metier.replace(' ', '_')
-        self.collection_name = metier_wo_space+'_'+localisation+'_'+email
+        self.counter = 0
+
         client = MongoClient('localhost', 27017)
         db = client.test_database
         test = 'col_indeed_scrap'
@@ -39,11 +46,11 @@ class Scrapper:
 
     def add_db(self, line_to_add):
         self.collection.insert_one(line_to_add)
-        print(line_to_add, ' added to DB : ', self.collection_name)
+        print('Annonce ', self.counter, ' added to DB  ')
 
     def process_date(self,str_date):
         if re.findall(r'heures',str_date):
-            nb_heures = re.findall(r'([0-9]) heures',str_date)
+            nb_heures = re.findall(r'([0-9]+) heures',str_date)
             nb_heures = int(nb_heures[0])  
             duree = datetime.now() - timedelta(hours=nb_heures)
             date = duree.date()
@@ -65,7 +72,7 @@ class Scrapper:
             date = duree.date()
         else:
             date = ''
-        return date
+        return date.strftime("%d/%m/%Y")
 
     def scrap(self):
 
@@ -86,9 +93,9 @@ class Scrapper:
             driver.find_element_by_xpath('//*[@id="text-input-where"]').send_keys(Keys.BACKSPACE)  # effacer la localisation pré-ecrite
         driver.find_element_by_xpath('//*[@id="text-input-where"]').send_keys(self.localisation)  # Ecrire dans la barre de localisation
         driver.find_element_by_xpath('/html/body/div/div[2]/div[2]/div/form/div[3]/button').click()  # clicker sur rechercher
-
-        groupe = 1
         counter = 0
+        groupe = 1
+        page = 0
         while True:
             driver.delete_all_cookies()
             while True:
@@ -96,8 +103,10 @@ class Scrapper:
                 results = driver.find_elements_by_class_name('result')
                 len(results)
                 for i in range(0, len(results)):
+                    driver.execute_script("arguments[0].scrollIntoView();", results[i])
                     counter += 1
                     poste = results[i].find_element_by_class_name('jobtitle').text
+                    poste_clikable = results[i].find_element_by_class_name('jobtitle') 
                     location = results[i].find_element_by_class_name('location').text
                     try:
                         company_elem = results[i].find_element_by_class_name('company').text
@@ -112,18 +121,28 @@ class Scrapper:
                         salary = results[i].find_element_by_class_name('salary').text
                     except:
                         salary = ''
-                    results[i].click() # ouvrir la side windows
-                    time.sleep(2) # attendre pour etre sur que tout soit chargé
+                    date_scrap = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
                     try:
+                        poste_clikable.click() # ouvrir la side windows
+                        listener = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, '//*[@id="vjs-desc"]')))
+                        listener.click()
                         resume = driver.find_element_by_xpath('//*[@id="vjs-desc"]').text # récupérer la description
                     except:
                         resume = ''
-                    line = {'Poste': poste, 'Location': location, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date}
-                    if self.collection.find_one(line):
-                        print('trouvé dans la Database, suivant !')
+                    line = {'Poste': poste, 'Location': location, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date,'Date_scrap':date_scrap}
+                    if self.collection.find_one({'Resume':resume}):
+                        elem_test = self.collection.find_one({'Resume':resume})
+                        if elem_test['Location'] == location:
+                            print('trouvé dans la Database, suivant !')
                     else:
-                        self.add_db(line)
-                        df = df.append(line, ignore_index=True)
+                        
+                        if company_elem == '' and salary == '' and date == '' and poste == '' and location =='':
+                            print('Blank Line ',counter)
+                            continu = input('Continuer')
+                        else:
+                            print(poste,' ajouté')
+                            self.add_db(line)
+                            #df = df.append(line, ignore_index=True)
                     
                 time.sleep(1)
                 btn_list = driver.find_elements_by_class_name('np')  # liste boutons suivant et precedent
@@ -131,15 +150,19 @@ class Scrapper:
                 if len(btn_list) > 1:  # si il y a precedent et suivant
                     try:
                         btn_list[1].click()  # clicker sur suivant
+                        page +=1
                     except:
                         driver.refresh()
                         time.sleep(2)
+                        btn_list = driver.find_elements_by_class_name('np')  # liste boutons suivant et precedent
                         btn_list[1].click()  # clicker sur suivant
+                        page +=1
 
                 elif btn_list[0].text == '« Précédent':  # si il y a que précédent on est arrivé au bout
                     break
                 else:
                     btn_list[0].click()  # cllicker sur suivant
+                    page +=1
 
                 try:
                     time.sleep(3)  # attendre que la popup s'ouvre
@@ -148,19 +171,44 @@ class Scrapper:
                     pass
 
             try:
+                time.sleep(2)
                 driver.find_element_by_xpath('/html/body/table[2]/tbody/tr/td/table/tbody/tr/td[2]/p/a').click() #cliker sur autres resultats de recherche
                 groupe += 1
             except:
                 break   
-        return df    
+        return True
 
 
 
-parisds = Scrapper('Data scientist','Paris','anthony93460@gmail.com')
-parisds.scrap()
+
+class ScrapThread (threading.Thread):
+    def __init__(self, n,metiers):
+        threading.Thread.__init__(self)
+        self.n = n
+        self.location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpelier']
+        self.metiers = metiers
+        
+    def run(self):
+        print("thread ", self.n)
+        scrappeur = Scrapper(self.metiers,self.location_list[self.n],'anthony93460@gmail.com')
+        scrappeur.scrap()
 
 
+def run():
+    location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpelier']
+    metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
+    threads = {}
+    for i in range(0,len(location_list)):
+        threads['thread'+str(i)] = ScrapThread(i,metiers)
+        threads['thread'+str(i)].start()
+        
 
+run()
+
+
+# df = pd.DataFrame(list(parisds.collection.find()))
+
+# df.to_csv('indeed.csv')
 
 
 
