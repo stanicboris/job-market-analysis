@@ -43,11 +43,35 @@ class preprocessing():
         # Boucle pour regrouper le bassin d'emploi parisien
         if ville in list('Toulouse', 'Nantes', 'Bordeaux', 'Montpellier', 'Lyon'):
             bassin_emploi = ville
-
+            localisation = bassin_emploi
         else:
             bassin_emploi = 'Ile-de-France'
 
-        return bassin_emploi
+        if "Paris " in location:
+            localisation = "Paris"
+
+        if "(95)" in location:
+            localisation = "Val d'oise 95"
+
+        if "(94)" in location:
+            localisation = "Val de Marne 94"
+
+        if "(93)" in location:
+            localisation = "Seine saint denis 93"
+
+        if "(92)" in location:
+            localisation = "Haut de Seine 92"
+
+        if "(91)" in location:
+            localisation = "Essonnes 91"
+
+        if "(78)" in location:
+            localisation = "Yvelines 78"
+
+        if "(77)" in location:
+            localisation = "Seine et Marne 77"
+
+        return bassin_emploi , localisation
 
 
     def process_date(self, str_date):
