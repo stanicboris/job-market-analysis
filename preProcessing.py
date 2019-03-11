@@ -23,9 +23,9 @@ class preprocessing():
     """ Contient toutes les fonctions nécessaires à la création de colonnes 'propres'
         pour la prédiction et la visualisation. """
 
-    def __init__(self, database):
+    def __init__(self):
 
-        self.database = database()
+        self = self
 
 
     def process_location(self, location):
@@ -152,7 +152,7 @@ class preprocessing():
         self.resume = resume.lower()
 
         postes = re.findall(r'(analyst|science|scientist|engineer|ingénieur)', poste)
-        contrats = re.findall(r'(cdd|cdi|intern|stage|stagiaire|internship', resume)
+        contrats = re.findall(r'(cdd|cdi|stage|stagiaire|internship)', resume)
 
         # Catégorisation métier
         if 'analyst' in postes:
@@ -167,7 +167,7 @@ class preprocessing():
         # Catégorisation contrat
         if 'cdd' in contrats:
             contrat = 'CDD'
-        elif 'intern' or 'stage' or 'internship' or 'stagiaire' in contrats:
+        elif 'stage' or 'internship' or 'stagiaire' in contrats:
             contrat = 'Stage'
         else:
             contrat = 'CDI'
