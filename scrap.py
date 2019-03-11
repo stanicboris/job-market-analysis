@@ -25,11 +25,10 @@ from selenium.webdriver.support import expected_conditions as ec
 import re
 import time
 from datetime import datetime , timedelta
-from pymongo import MongoClient
 import threading
 import time
-
-
+import preProcessing as pp 
+import mongo
 
 class Scrapper:
     
@@ -38,41 +37,8 @@ class Scrapper:
         self.metier = metier
         self.localisation = localisation
         self.counter = 0
-
-        client = MongoClient('localhost', 27017)
-        db = client.test_database
-        test = 'col_indeed_scrap'
-        self.collection = db[test]
-
-    def add_db(self, line_to_add):
-        self.collection.insert_one(line_to_add)
-        print('Annonce ', self.counter, ' added to DB  ')
-
-    def process_date(self,str_date):
-        if re.findall(r'heures',str_date):
-            nb_heures = re.findall(r'([0-9]+) heures',str_date)
-            nb_heures = int(nb_heures[0])  
-            duree = datetime.now() - timedelta(hours=nb_heures)
-            date = duree.date()
-        elif re.findall(r'heure',str_date):
-            nb_heures = 1
-            duree = datetime.now() - timedelta(hours=nb_heures)
-            date = duree.date()
-        elif re.findall(r'jours',str_date):
-            if re.findall(r' ([0-9]) jours',str_date):
-                nb_jours = re.findall(r'([0-9]+) jours',str_date)
-                nb_jours = int(nb_jours[0])  
-                duree = datetime.now() - timedelta(days=nb_jours)
-                date = duree.date()
-            else:
-                duree = datetime.now() - timedelta(days=30)
-                date = duree.date()
-        elif re.findall(r'jour',str_date):
-            duree = datetime.now() - timedelta(days=1)
-            date = duree.date()
-        else:
-            date = ''
-        return date.strftime("%d/%m/%Y")
+        self.preprocess = pp.preprocessing()
+        self.db = mongo.Mongo()
 
     def scrap(self):
 
@@ -108,20 +74,25 @@ class Scrapper:
                     poste = results[i].find_element_by_class_name('jobtitle').text
                     poste_clikable = results[i].find_element_by_class_name('jobtitle') 
                     location = results[i].find_element_by_class_name('location').text
+                    bassin , location = self.preprocess.process_location(location)
+
                     try:
                         company_elem = results[i].find_element_by_class_name('company').text
                     except:
                         company_elem = ''
+
                     try:
                         date = results[i].find_element_by_class_name('date').text
-                        date = self.process_date(date)
+                        date = self.preprocess.process_date(date)
                     except:
                         date = ''
+
                     try:
                         salary = results[i].find_element_by_class_name('salary').text
+                        salary = self.preprocess.process_salary(salary)
                     except:
                         salary = ''
-                    date_scrap = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+                    
                     try:
                         poste_clikable.click() # ouvrir la side windows
                         listener = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, '//*[@id="vjs-desc"]')))
@@ -129,19 +100,24 @@ class Scrapper:
                         resume = driver.find_element_by_xpath('//*[@id="vjs-desc"]').text # récupérer la description
                     except:
                         resume = ''
-                    line = {'Poste': poste, 'Location': location, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date,'Date_scrap':date_scrap}
+                    
+                    poste , contrat = self.preprocess.process_poste(poste,resume)
+
+                    date_scrap = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+
+                    line = {'Poste': poste, 'Contrat':contrat, 'Location': location, 'Bassin_emploi':bassin, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date,'Date_scrap':date_scrap}
+
                     if self.collection.find_one({'Resume':resume}):
                         elem_test = self.collection.find_one({'Resume':resume})
                         if elem_test['Location'] == location:
                             print('trouvé dans la Database, suivant !')
                     else:
-                        
                         if company_elem == '' and salary == '' and date == '' and poste == '' and location =='':
                             print('Blank Line ',counter)
                             continu = input('Continuer')
                         else:
                             print(poste,' ajouté')
-                            self.add_db(line)
+                            self.db.add_db(line,counter)
                             #df = df.append(line, ignore_index=True)
                     
                 time.sleep(1)
@@ -195,7 +171,7 @@ class ScrapThread (threading.Thread):
 
 
 def run():
-    location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpelier']
+    location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpellier']
     metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
     threads = {}
     for i in range(0,len(location_list)):
