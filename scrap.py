@@ -48,8 +48,9 @@ class Scrapper:
         profile.set_preference("browser.cache.offline.enable", False)
         profile.set_preference("network.http.use-cache", False)
         driver = webdriver.Firefox(profile, executable_path=r'C:\Users\antho\Documents\Python Scripts\geckodriver.exe')
-        
-        df = pd.DataFrame(columns=['Poste', 'Location', 'Compagny', 'Salary', 'Resume', 'Date'])
+        driver.maximize_window()
+
+        #df = pd.DataFrame(columns=['Poste', 'Location', 'Compagny', 'Salary', 'Resume', 'Date'])
         driver.get('https://www.indeed.fr/')  # Aller sur le site
         driver.find_element_by_xpath('//*[@id="text-input-what"]').send_keys(self.metier)  # Ecrire dans la barre de recherche
         time.sleep(1)
@@ -107,10 +108,9 @@ class Scrapper:
 
                     line = {'Poste': poste, 'Contrat':contrat, 'Location': location, 'Bassin_emploi':bassin, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date,'Date_scrap':date_scrap}
 
-                    if self.collection.find_one({'Resume':resume}):
-                        elem_test = self.collection.find_one({'Resume':resume})
-                        if elem_test['Location'] == location:
-                            print('trouvé dans la Database, suivant !')
+
+                    if self.db.check_db(line):
+                        print('trouvé dans la Database, suivant !')
                     else:
                         if company_elem == '' and salary == '' and date == '' and poste == '' and location =='':
                             print('Blank Line ',counter)

@@ -28,7 +28,7 @@ class preprocessing():
         pour la prédiction et la visualisation. """
 
     def __init__(self):
-            
+
         self = self
 
 
@@ -39,9 +39,9 @@ class preprocessing():
 
         # Extraction de la ville sans le code postal
         ville = re.findall(r'(\w+)(?= \()', location)
-
+        localisation = ''
         # Boucle pour regrouper le bassin d'emploi parisien
-        if ville in list('Toulouse', 'Nantes', 'Bordeaux', 'Montpellier', 'Lyon'):
+        if ville in ['Toulouse', 'Nantes', 'Bordeaux', 'Montpellier', 'Lyon']:
             bassin_emploi = ville
             localisation = bassin_emploi
         else:
@@ -156,7 +156,7 @@ class preprocessing():
         self.resume = resume.lower()
 
         postes = re.findall(r'(analyst|science|scientist|engineer|ingénieur)', poste)
-        contrats = re.findall(r'(cdd|cdi|intern|stage|stagiaire|internship', resume)
+        contrats = re.findall(r'(cdd|cdi|intern|stage|stagiaire|internship)', resume)
 
         # Catégorisation métier
         if 'analyst' in postes:
