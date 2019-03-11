@@ -27,9 +27,9 @@ class preprocessing():
     """ Contient toutes les fonctions nécessaires à la création de colonnes 'propres'
         pour la prédiction et la visualisation. """
 
-    def __init__(self, database):
+    def __init__(self):
 
-        self.database = database()
+        
 
 
     def process_location(self, location):
