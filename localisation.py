@@ -71,3 +71,25 @@ for i in d2['Location'].index:
 for i in d2['Location'].index:
     if "(77)" in d2.loc[i, 'Location']:
         d2.loc[i, 'Location'] = "Seine et Marne 77"
+
+# Traitons maintenant les cas spéciaux
+for i in d2['Location'].index:
+    if "Hauts" in d2.loc[i, 'Location']:
+        d2.loc[i, 'Location'] = "Haut de Seine 92"
+
+for i in d2['Location'].index:
+    if "Val-" in d2.loc[i, 'Location']:
+        d2.loc[i, 'Location'] = "Val de Marne 94"
+
+for i in d2['Location'].index:
+    if "Seine-" in d2.loc[i, 'Location']:
+        d2.loc[i, 'Location'] = "Seine saint denis 93"
+
+# %%
+import matplotlib.pyplot as plt
+
+d2['Location'].value_counts().plot()
+# plot la somme des localisation des taff dans l'ile de France
+d2["Location"].value_counts().plot(kind='bar')
+# PIE
+d2["Location"].value_counts().plot(kind='pie')
