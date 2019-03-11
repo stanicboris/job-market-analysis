@@ -48,7 +48,7 @@ class Scrapper:
         profile.set_preference("browser.cache.offline.enable", False)
         profile.set_preference("network.http.use-cache", False)
         driver = webdriver.Firefox(profile, executable_path=r'C:\Users\antho\Documents\Python Scripts\geckodriver.exe')
-        driver.set_window_size(5000, 5000)
+        driver.set_window_size(3000, 1200)
 
         #df = pd.DataFrame(columns=['Poste', 'Location', 'Compagny', 'Salary', 'Resume', 'Date'])
         driver.get('https://www.indeed.fr/')  # Aller sur le site

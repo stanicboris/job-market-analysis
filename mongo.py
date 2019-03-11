@@ -6,7 +6,7 @@ class Mongo():
     def __init__(self):
         client = MongoClient('localhost', 27017)
         db = client.test_database
-        test = 'col_indeed_scrap'
+        test = 'indeed_v2'
         self.collection = db[test]
 
     def add_db(self, line_to_add,counter):
