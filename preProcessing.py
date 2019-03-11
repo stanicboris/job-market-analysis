@@ -14,11 +14,11 @@ from datetime import datetime, timedelta
 from math import isnan
 pd.options.display.max_columns = None
 
-df = pd.read_csv('indeed.csv', sep=',', index_col='Unnamed: 0')
+#df = pd.read_csv('indeed.csv', sep=',', index_col='Unnamed: 0')
 
 #%% Exploration : NaN, types d'objets
-df.isna().sum() / len(df) * 100
-df.info()
+#df.isna().sum() / len(df) * 100
+#df.info()
 
 #%% Class Pre-processing
 
@@ -37,15 +37,21 @@ class preprocessing():
         """ Extrait le code postal (pour l'IDF) ou la ville (pour les autres villes),
             puis le classe dans la catégorie 'Bassin_emploi' correspondante. """
 
+        location = location.lower()
         # Extraction de la ville sans le code postal
-        ville = re.findall(r'(\w+)(?= \()', location)
+        ville = re.findall(r'([a-zA-Z ]*)(?= \()', location)
+        if len(ville) == 0:
+            ville = re.findall(r'(^[a-zA-Z ]*)', location)
+        ville = ville[0]
         localisation = ''
         # Boucle pour regrouper le bassin d'emploi parisien
-        if ville in ['Toulouse', 'Nantes', 'Bordeaux', 'Montpellier', 'Lyon']:
-            bassin_emploi = ville
-            localisation = bassin_emploi
-        else:
-            bassin_emploi = 'Ile-de-France'
+        for i in ['toulouse', 'nantes', 'bordeaux', 'montpellier', 'lyon']:
+            if ville == i:
+                localisation = ville
+                bassin_emploi = ville
+                break
+            else:
+                bassin_emploi = 'Ile-de-France'
 
         if "Paris " in location:
             localisation = "Paris"
@@ -122,61 +128,68 @@ class preprocessing():
 
         """ Transforme l'info Indeed en salaire brut /an. """
 
-        salaries = re.findall(r'(\d+ ?\d+)(?= €)', salary)
         frequency = re.findall(r'(?<=par )(\w+)', salary)
-
-        # Gestion des fourchettes de salaires
-        if len(salaries) >= 2:
-            salary_min = int(pd.to_numeric(salaries[0].replace(" ", "")))
-            salary_max = int(pd.to_numeric(salaries[1].replace(" ", "")))
-            salary = (salary_min+salary_max)/2
-
+        salary = salary.replace(' ','')
+        sal = re.findall(r'([0-9]+)',salary)
+        if len(sal) >= 2:
+            sal_min = int(sal[0])
+            sal_max = int(sal[1])
+            salary = (sal_min+sal_max)/2
         else:
-            salary = int(pd.to_numeric(salaries[0].replace(" ", "")))
+            salary = int(sal[0])
 
-        # Gestion de l'échelle
-        if frequency == 'jour':
+        if frequency[0] == 'mois':
+            salary = salary *12
+        elif frequency[0] == 'jour' or frequency[0] == 'jours':
             salary = salary * 365
-
-        elif frequency == 'mois':
-            salary = salary * 12
-
-        else:
+        elif frequency[0] == 'an' or frequency[0] == 'ans':
             salary = salary
-
+            
         # Integer
         return salary
 
 
-    def process_poste(self, poste, resume):
+def process_poste(poste, resume):
+    
+    """ Extrait le métier et le statut. Ex : Data Scientist / CDI """
 
-        """ Extrait le métier et le statut. Ex : Data Scientist / CDI """
+    poste = poste.lower()
+    resume = resume.lower()
 
-        self.poste = poste.lower()
-        self.resume = resume.lower()
+    postes = re.findall(r'(analyst|analyste|science|scientist|engineer|ingénieur)', poste)
+    contrats = re.findall(r'(cdd|cdi|intern|stage|stagiaire|internship)', resume)
+    
+    if len(postes) >= 1:
+        for i in postes:
+            if i == 'science' or i == 'scientist':
+                poste = 'Data Scientist'
+                break
+            elif i == 'engineer' or i == 'ingénieur':
+                poste = 'Data Engineer'
+                break
+            elif i == 'analyst' or i =='analyste':
+                poste = 'Data Analyst'
+                break
+            else:
+                poste = 'Dev'
+    else:
+        poste = 'Dev'
+        
+    if len(contrats) >=1:
+        for i in contrats:
+            if i == 'cdd':
+                contrat = 'CDD'
+                break
+            elif i == 'intern' or i == 'stage' or i == 'stagiaire' or i == 'internship':
+                contrat = 'Stage'
+                break
+            else:
+                contrat = 'CDI'
+    else:
+        contrat = 'CDI'
+        
 
-        postes = re.findall(r'(analyst|science|scientist|engineer|ingénieur)', poste)
-        contrats = re.findall(r'(cdd|cdi|intern|stage|stagiaire|internship)', resume)
-
-        # Catégorisation métier
-        if 'analyst' in postes:
-            poste = 'Data analyst'
-        elif 'science' or 'scientist' in postes:
-            poste = 'Data scientist'
-        elif 'engineer' or 'ingénieur' in postes:
-            poste = 'Data engineer'
-        else:
-            poste = 'Développeur'
-
-        # Catégorisation contrat
-        if 'cdd' in contrats:
-            contrat = 'CDD'
-        elif 'intern' or 'stage' or 'internship' or 'stagiaire' in contrats:
-            contrat = 'Stage'
-        else:
-            contrat = 'CDI'
-
-        return poste, contrat
+    return poste, contrat
 
 
 
