@@ -55,27 +55,22 @@ class preprocessing():
 
         if "Paris " in location:
             localisation = "Paris"
-
-        if "(95)" in location:
+        elif "(95)" in location:
             localisation = "Val d'Oise 95"
-
-        if "(94)" in location:
+        elif "(94)" in location:
             localisation = "Val de Marne 94"
-
-        if "(93)" in location:
+        elif "(93)" in location:
             localisation = "Seine-Saint-Denis 93"
-
-        if "(92)" in location:
+        elif "(92)" in location:
             localisation = "Hauts-de-Seine 92"
-
-        if "(91)" in location:
+        elif "(91)" in location:
             localisation = "Essonnes 91"
-
-        if "(78)" in location:
+        elif "(78)" in location:
             localisation = "Yvelines 78"
-
-        if "(77)" in location:
+        elif "(77)" in location:
             localisation = "Seine-et-Marne 77"
+        else:
+            localisation = ville
 
         return bassin_emploi , localisation
 
