@@ -29,6 +29,8 @@ import threading
 import time
 import preProcessing as pp 
 import mongo
+from bs4 import BeautifulSoup
+import requests
 
 class Scrapper:
     
@@ -97,11 +99,10 @@ class Scrapper:
                         resume = ''
                     else:
                         try:
-                            poste_clikable.click() # ouvrir la side windows
-                            
-                            listener = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, '//*[@id="vjs-desc"]')))
-                            
-                            resume = driver.find_element_by_xpath('//*[@id="vjs-desc"]').text # récupérer la description
+                            lien = results[i].find_element_by_class_name('jobtitle').get_attribute('href')
+                            r = requests.get(lien)
+                            soup = BeautifulSoup(r.content)
+                            resume = soup.find("div", {"class":"jobsearch-JobComponent-description"}).text
                         except:
                             resume = ''
                         
