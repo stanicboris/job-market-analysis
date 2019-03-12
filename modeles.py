@@ -5,60 +5,50 @@ Created on Tue Mar  5 10:08:04 2019
 
 @author: ejoz
 """
-
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.svm import SVC
-from sklearn.externals.six import StringIO
-from IPython.display import Image
-import pydotplus
+from sklearn.metrics import accuracy_score, f1_score
 
-#%%
-import pandas as pd
-import numpy as np
-
-df = pd.read_csv('indeed.csv', sep=',', index_col='Unnamed: 0', na_filter=True)
-x = df.iloc[:, 1:5]
-y = df.loc[:, 'Salary']
-df.summary()
+#%% A transformer en importation mongo
+df = pd.read_csv('indeed_v4.csv', sep=',', index_col='Unnamed: 0', na_filter=True)
 df.info()
 df.isna().sum()
 
-#%%
-import preProcessing
-process = preProcessing.preprocessing()
+#%% Pre-prcessing pour fitter le modèle
+data = df[['Bassin_emploi', 'Contrat', 'Poste', 'Salary']][df['Salary'].isna() == False]
+data = pd.get_dummies(data=data, columns={'Poste', 'Bassin_emploi', 'Contrat'}, drop_first=True)
 
-nanas = df['Salary'].isna().sum()
-df['Salary'].isnull().sum()
-df['Salary'] = df['Salary'].astype('str')
+x = data.iloc[:, 1:]
+y = data['Salary']
 
-df['Poste'] = df['Poste'].astype('str')
-df['Resume'] = df['Resume'].astype('str')
+lab_enc = LabelEncoder()
+y_encoded = lab_enc.fit_transform(y)
 
-for row in range(len(x)):
-	poste, contrat = process.process_poste(df.loc[row, 'Poste'], df.loc[row, 'Resume'])
-	df.loc[row, 'Poste_clean'] = poste
-	df.loc[row, 'Contrat'] = contrat
-
-df['Contrat'].unique()
-df['Poste_clean'].unique()
-
+x_train, x_test, y_train, y_test = train_test_split(x, y_encoded)
 
 #%% Kernel RBF
+rbf = SVC()
 parameters = {'kernel': ['rbf'],
 			  'gamma': [1e-3, 1e-4],
 			  'C': [1, 10, 100, 1000]}
-clf = GridSearchCV(SVC(), parameters, cv=5)
-clf.fit(x, y)
+clf_rbf = GridSearchCV(rbf, parameters, cv=5)
+clf_rbf.fit(x_train, y_train)
+clf_rbf.best_params_
+
 
 #%% Random Forest
 rf = RandomForestClassifier()
 parameters = grid_param = {'n_estimators': [100, 300, 500, 800, 1000],
 						   'criterion': ['gini', 'entropy'],
-						   'bootstrap': [True, False]
-}
-clf = GridSearchCV(svm, parameters, cv=5)
-clf.fit(x, y)
-
+						   'bootstrap': [True, False]}
+clf_rf = GridSearchCV(rf, parameters, cv=5)
+clf_rf.fit(x_train, y_train)
+clf_rf.best_params_
+y_pred = clf_rf.predict(x_test)
+accuracy_score(y_test, y_pred)
+f1_score(y_test, y_pred, average='micro')
+all_accuracies = cross_val_score(estimator=clf_rf, X=x_train, y=y_train, cv=5)
 
