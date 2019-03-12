@@ -29,6 +29,8 @@ import threading
 import time
 import preProcessing as pp 
 import mongo
+from bs4 import BeautifulSoup
+import requests
 
 class Scrapper:
     
@@ -48,8 +50,9 @@ class Scrapper:
         profile.set_preference("browser.cache.offline.enable", False)
         profile.set_preference("network.http.use-cache", False)
         driver = webdriver.Firefox(profile, executable_path=r'C:\Users\antho\Documents\Python Scripts\geckodriver.exe')
-        
-        df = pd.DataFrame(columns=['Poste', 'Location', 'Compagny', 'Salary', 'Resume', 'Date'])
+        driver.set_window_size(3000, 1200)
+
+        #df = pd.DataFrame(columns=['Poste', 'Location', 'Compagny', 'Salary', 'Resume', 'Date'])
         driver.get('https://www.indeed.fr/')  # Aller sur le site
         driver.find_element_by_xpath('//*[@id="text-input-what"]').send_keys(self.metier)  # Ecrire dans la barre de recherche
         time.sleep(1)
@@ -92,25 +95,24 @@ class Scrapper:
                         salary = self.preprocess.process_salary(salary)
                     except:
                         salary = ''
-                    
+
                     try:
-                        poste_clikable.click() # ouvrir la side windows
-                        listener = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, '//*[@id="vjs-desc"]')))
-                        listener.click()
-                        resume = driver.find_element_by_xpath('//*[@id="vjs-desc"]').text # récupérer la description
+                        lien = results[i].find_element_by_class_name('jobtitle').get_attribute('href')
+                        r = requests.get(lien)
+                        soup = BeautifulSoup(r.content)
+                        resume = soup.find("div", {"class":"jobsearch-JobComponent-description"}).text
                     except:
                         resume = ''
-                    
+                        
                     poste , contrat = self.preprocess.process_poste(poste,resume)
 
                     date_scrap = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
 
                     line = {'Poste': poste, 'Contrat':contrat, 'Location': location, 'Bassin_emploi':bassin, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date,'Date_scrap':date_scrap}
 
-                    if self.collection.find_one({'Resume':resume}):
-                        elem_test = self.collection.find_one({'Resume':resume})
-                        if elem_test['Location'] == location:
-                            print('trouvé dans la Database, suivant !')
+
+                    if self.db.check_db(line):
+                        print('trouvé dans la Database, suivant !') 
                     else:
                         if company_elem == '' and salary == '' and date == '' and poste == '' and location =='':
                             print('Blank Line ',counter)
@@ -119,7 +121,7 @@ class Scrapper:
                             print(poste,' ajouté')
                             self.db.add_db(line,counter)
                             #df = df.append(line, ignore_index=True)
-                    
+                
                 time.sleep(1)
                 btn_list = driver.find_elements_by_class_name('np')  # liste boutons suivant et precedent
                 len(btn_list)
