@@ -95,35 +95,33 @@ class Scrapper:
                         salary = self.preprocess.process_salary(salary)
                     except:
                         salary = ''
-                    if poste_clikable.get_attribute('target') == '_blank':
+
+                    try:
+                        lien = results[i].find_element_by_class_name('jobtitle').get_attribute('href')
+                        r = requests.get(lien)
+                        soup = BeautifulSoup(r.content)
+                        resume = soup.find("div", {"class":"jobsearch-JobComponent-description"}).text
+                    except:
                         resume = ''
-                    else:
-                        try:
-                            lien = results[i].find_element_by_class_name('jobtitle').get_attribute('href')
-                            r = requests.get(lien)
-                            soup = BeautifulSoup(r.content)
-                            resume = soup.find("div", {"class":"jobsearch-JobComponent-description"}).text
-                        except:
-                            resume = ''
                         
-                        poste , contrat = self.preprocess.process_poste(poste,resume)
+                    poste , contrat = self.preprocess.process_poste(poste,resume)
 
-                        date_scrap = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+                    date_scrap = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
 
-                        line = {'Poste': poste, 'Contrat':contrat, 'Location': location, 'Bassin_emploi':bassin, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date,'Date_scrap':date_scrap}
+                    line = {'Poste': poste, 'Contrat':contrat, 'Location': location, 'Bassin_emploi':bassin, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date,'Date_scrap':date_scrap}
 
 
-                        if self.db.check_db(line):
-                            print('trouvé dans la Database, suivant !') 
+                    if self.db.check_db(line):
+                        print('trouvé dans la Database, suivant !') 
+                    else:
+                        if company_elem == '' and salary == '' and date == '' and poste == '' and location =='':
+                            print('Blank Line ',counter)
+                            continu = input('Continuer')
                         else:
-                            if company_elem == '' and salary == '' and date == '' and poste == '' and location =='':
-                                print('Blank Line ',counter)
-                                continu = input('Continuer')
-                            else:
-                                print(poste,' ajouté')
-                                self.db.add_db(line,counter)
-                                #df = df.append(line, ignore_index=True)
-                    
+                            print(poste,' ajouté')
+                            self.db.add_db(line,counter)
+                            #df = df.append(line, ignore_index=True)
+                
                 time.sleep(1)
                 btn_list = driver.find_elements_by_class_name('np')  # liste boutons suivant et precedent
                 len(btn_list)
