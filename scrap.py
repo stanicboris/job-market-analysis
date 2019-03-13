@@ -167,7 +167,7 @@ class ScrapThread (threading.Thread):
         self.metiers = metiers
         
     def run(self):
-        print("thread ", self.n)
+        print("thread ", self.location_list[self.n])
         scrappeur = Scrapper(self.metiers,self.location_list[self.n],'anthony93460@gmail.com')
         scrappeur.scrap()
 
