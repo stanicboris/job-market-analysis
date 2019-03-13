@@ -24,8 +24,8 @@ class Mongo():
         df = pd.DataFrame(list(self.collection.find()))
         return df
     
-    def add_prediction(self,line_to_add,forest,rbf):
-        dict_line = dict(line_to_add)
+    def add_prediction(self,id,forest,rbf):
+       
         newvalues = { "$set": { "Forest": forest, "RBF":rbf } }
-        myquery = self.collection.find_one({'_id':dict_line['_id']})
+        myquery = self.collection.find_one({'_id':id})
         self.collection.update_one(myquery, newvalues)
