@@ -19,3 +19,13 @@ class Mongo():
             if elem_test['Location'] == line_to_check['Location']:
                 return True
         return False
+
+    def get_df(self):
+        df = pd.DataFrame(list(self.collection.find()))
+        return df
+    
+    def add_prediction(self,line_to_add,forest,rbf):
+        dict_line = dict(line_to_add)
+        newvalues = { "$set": { "Forest": forest, "RBF":rbf } }
+        myquery = self.collection.find_one({'_id':dict_line['_id']})
+        self.collection.update_one(myquery, newvalues)
