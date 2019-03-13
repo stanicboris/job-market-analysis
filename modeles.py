@@ -31,7 +31,8 @@ x_train, x_test, y_train, y_test = train_test_split(x, y)
 rbf = SVC()
 parameters = {'kernel': ['rbf'],
 			  'gamma': [1e-3, 1e-4],
-			  'C': [1, 10, 100, 1000]}
+			  'C': [1, 10, 100, 1000],
+			  'shrinking' : [True, False]}
 clf_rbf = GridSearchCV(rbf, parameters, cv=5)
 clf_rbf.fit(x_train, y_train)
 clf_rbf.best_params_
@@ -41,6 +42,7 @@ y_pred_rbf = clf_rbf.predict(x_test)
 plt.scatter(range(len(y_test)), y_test, color = 'blue')
 plt.scatter(range(len(y_pred_rbf)), y_pred_rbf, color = 'red')
 plt.legend(('Training set', 'Test set'))
+plt.title('Comparaison des résultats avec le modèle Kernel RBF')
 
 #%% Random Forest
 rf = RandomForestClassifier()
@@ -59,3 +61,8 @@ all_accuracies = cross_val_score(estimator=clf_rf, X=x_train, y=y_train, cv=5)
 plt.scatter(range(len(y_test)), y_test, color = 'blue')
 plt.scatter(range(len(y_pred_rf)), y_pred_rf, color = 'red')
 plt.legend(('Training set', 'Test set'))
+plt.title('Comparaison des résultats avec le modèle Random Forest')
+
+#%% Prédiction
+data_to_pred = df[['Bassin_emploi', 'Contrat', 'Poste']][df['Salary'].isna() == True]
+data_to_pred = pd.get_dummies(data=data_to_pred, columns={'Poste', 'Bassin_emploi', 'Contrat'}, drop_first=True)
