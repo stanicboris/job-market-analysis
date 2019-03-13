@@ -6,7 +6,7 @@ Created on Tue Mar  5 10:08:04 2019
 @author: ejoz
 """
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
+import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.svm import SVC
@@ -53,8 +53,8 @@ clf_rf = GridSearchCV(rf, parameters, cv=5)
 clf_rf.fit(x_train, y_train)
 clf_rf.best_params_
 y_pred_rf = clf_rf.predict(x_test)
-accuracy_score(y_test, y_pred)
-f1_score(y_test, y_pred, average='micro')
+accuracy_score(y_test, y_pred_rf)
+f1_score(y_test, y_pred_rf, average='micro')
 all_accuracies = cross_val_score(estimator=clf_rf, X=x_train, y=y_train, cv=5)
 
 # Comparaison données test/entraînement
@@ -64,5 +64,24 @@ plt.legend(('Training set', 'Test set'))
 plt.title('Comparaison des résultats avec le modèle Random Forest')
 
 #%% Prédiction
-data_to_pred = df[['Bassin_emploi', 'Contrat', 'Poste']][df['Salary'].isna() == True]
+data_to_pred = df[['Bassin_emploi', 'Contrat', 'Poste', '_id']][df['Salary'].isna() == True]
 data_to_pred = pd.get_dummies(data=data_to_pred, columns={'Poste', 'Bassin_emploi', 'Contrat'}, drop_first=True)
+
+data_to_pred['Salaires_RBF'] = clf_rbf.predict(data_to_pred.iloc[:, 1:])
+data_to_pred['Salaires_Random_Forest'] = clf_rf.predict(data_to_pred.iloc[:, 1:-1])
+final_data = data_to_pred[['_id', 'Salaires_RBF', 'Salaires_Random_Forest']]
+
+#%%
+import mongo
+mongo = mongo.Mongo()
+
+for i in range(len(final_data)):
+
+	id_ = final_data.loc[i, '_id']
+	forest = final_data.loc[i, 'Salaires_Random_Forest']
+	rbf = final_data.loc[i, 'Salaires_RBF']
+	mongo.add_prediction(id_, forest, rbf)
+
+
+
+
