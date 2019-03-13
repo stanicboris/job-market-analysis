@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-
+import pandas as pd
 
 class Mongo():
 
@@ -24,8 +24,8 @@ class Mongo():
         df = pd.DataFrame(list(self.collection.find()))
         return df
     
-    def add_prediction(self,id,forest,rbf):
+    def add_prediction(self,idt,forest,rbf):
        
         newvalues = { "$set": { "Forest": forest, "RBF":rbf } }
-        myquery = self.collection.find_one({'_id':id})
+        myquery = self.collection.find_one({'_id':idt})
         self.collection.update_one(myquery, newvalues)

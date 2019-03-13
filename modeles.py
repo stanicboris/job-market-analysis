@@ -7,19 +7,24 @@ Created on Tue Mar  5 10:08:04 2019
 """
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
+from sklearn import model_selection
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, f1_score
 import matplotlib.pyplot as plt
+import mongo
+
+
 
 #%% A transformer en importation mongo
-df = pd.read_csv('indeed_v4.csv', sep=',', index_col='Unnamed: 0', na_filter=True)
-df.info()
-df.isna().sum()
+mongo = mongo.Mongo()
+df = mongo.get_df()
 
 #%% Pre-processing pour fitter le modèle
-data = df[['Bassin_emploi', 'Contrat', 'Poste', 'Salary']][df['Salary'].isna() == False]
+data = df[['Bassin_emploi', 'Contrat', 'Poste', 'Salary']][df['Salary'] != '']
 data = pd.get_dummies(data=data, columns={'Poste', 'Bassin_emploi', 'Contrat'}, drop_first=True)
 
 x = data.iloc[:, 1:]
@@ -64,7 +69,7 @@ plt.legend(('Training set', 'Test set'))
 plt.title('Comparaison des résultats avec le modèle Random Forest')
 
 #%% Prédiction
-data_to_pred = df[['Bassin_emploi', 'Contrat', 'Poste', '_id']][df['Salary'].isna() == True]
+data_to_pred = df[['Bassin_emploi', 'Contrat', 'Poste', '_id']][df['Salary'] == '']
 data_to_pred = pd.get_dummies(data=data_to_pred, columns={'Poste', 'Bassin_emploi', 'Contrat'}, drop_first=True)
 
 data_to_pred['Salaires_RBF'] = clf_rbf.predict(data_to_pred.iloc[:, 1:])
@@ -72,8 +77,7 @@ data_to_pred['Salaires_Random_Forest'] = clf_rf.predict(data_to_pred.iloc[:, 1:-
 final_data = data_to_pred[['_id', 'Salaires_RBF', 'Salaires_Random_Forest']]
 
 #%%
-import mongo
-mongo = mongo.Mongo()
+
 
 for i in range(len(final_data)):
 
