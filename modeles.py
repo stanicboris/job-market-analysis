@@ -23,6 +23,8 @@ import mongo
 mongo = mongo.Mongo()
 df = mongo.get_df()
 
+#df = mongo.get_df()
+
 #%% Pre-processing pour fitter le modèle
 data = df[['Bassin_emploi', 'Contrat', 'Poste', 'Salary']][df['Salary'] != '']
 data = pd.get_dummies(data=data, columns={'Poste', 'Bassin_emploi', 'Contrat'}, drop_first=True)
