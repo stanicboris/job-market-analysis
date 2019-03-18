@@ -6,8 +6,10 @@ class Mongo():
     def __init__(self):
         client = MongoClient('localhost', 27017)
         self.db = client.test_database
-        self.col_name = 'indeed_v4'
+        self.col_name = 'indeed_v4_temp'
         self.collection = self.db[self.col_name]
+        self.col_name2 = 'indeed_v4'
+        self.collection2 = self.db[self.col_name2]
 
     def add_db(self, line_to_add,counter):
         self.collection.insert_one(line_to_add)
@@ -30,9 +32,9 @@ class Mongo():
         myquery = self.collection.find_one({'_id':idt})
         self.collection.update_one(myquery, newvalues)
     
-    def replace_df(self,df):
+    def final_df(self,df):
         self.db.drop_collection(self.col_name)
-        self.collection = self.db[self.col_name]
+        
         for i in df.index:
-            self.collection.insert_one(df.loc[i,:])
+            self.collection2.insert_one(df.loc[i,:])
         return True

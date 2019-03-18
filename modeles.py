@@ -25,6 +25,7 @@ class Modele():
 
     def run_models(self):
 
+        import mongo
         # Importation de la base de données en dataframe
         mongo = mongo.Mongo()
         df = mongo.get_df()
@@ -96,13 +97,9 @@ class Modele():
             df.loc[i,'Forest'] = forest
             df.loc[i,'RBF'] = rbf
 
-        if mongo.replace_df(df):
+        if mongo.final_df(df):
             print('DB updated')
 
         return True
 
 
-mod = Modele()
-cond =  mod.run_models()
-if cond:
-    print('Tout est ok ! T\'es trop fort Anthony')

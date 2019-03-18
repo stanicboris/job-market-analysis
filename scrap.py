@@ -147,6 +147,8 @@ class Scrapper:
                     driver.find_element_by_xpath('//*[@id="popover-close-link"]').click()  # fermer popup
                 except:
                     pass
+            if counter > 20:
+                return True
 
             try:
                 time.sleep(2)
@@ -179,9 +181,10 @@ def startThreads():
     for i in range(0,len(location_list)):
         threads['thread'+str(i)] = ScrapThread(i,metiers)
         threads['thread'+str(i)].start()
+    return threads
         
 
-startThreads()
+
 
 
 # df = pd.DataFrame(list(parisds.collection.find()))
