@@ -6,6 +6,26 @@
     <input type="submit" name="download" value="Download" class="btn btn-danger">
     <input type="submit" name="watch" value="Watch" class="btn btn-primary">
 </div>
-
+<h4>Entrez votre email pour recevoir gratuitement un rapport hebdomadaire</h4>
+<form action='' method="POST">
+    <input type="text" name="mail">
+    <button type="submit">Submit</button>
+</form>
+<!-- Display flash message --> 
+<section class="section--center mdl-grid mdl-grid--no-spacing">   
+    <div id="flashmessage" class="flash">
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <ul>
+        {% for message in messages %}
+        <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+      <!-- Timeout flash message -->
+      <script>$('#flashmessage').fadeOut(3000);</script>
+    </div>
+  </section>
 
 {% endblock %}

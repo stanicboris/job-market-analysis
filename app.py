@@ -30,7 +30,7 @@ host = 'localhost'
 port = 8000
 
 # Display all forms
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
     print('request.method', request.method)
     print('request.json', request.json)
@@ -43,7 +43,21 @@ def index():
     
     return render_template('scripts.html', data={'host':host, 'port':port})
 
-
+@app.route('/', methods=['POST'])
+def index_sub():
+    import mongo
+    email = request.form['mail']
+    mongo = mongo.Mongo()
+    cond = mongo.check_mail(email)
+    if cond:
+        mongo.add_email(email) 
+        message = 'Votre email à été ajoutée à la liste !'
+    else:
+        message = 'Veuillez entrer un email valide'
+    return render_template("scripts.html",message = message)
+    
+    
+    
 @app.route('/forms')
 def showMain():
     forms = ["thing1", "thing2", "cat-in-the-hat"]
@@ -61,3 +75,16 @@ if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host=host, port=port)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

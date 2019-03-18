@@ -50,7 +50,7 @@ class Scrapper:
         profile.set_preference("browser.cache.offline.enable", False)
         profile.set_preference("network.http.use-cache", False)
         driver = webdriver.Firefox(profile, executable_path=r'C:\Users\antho\Documents\Python Scripts\geckodriver.exe')
-        driver.set_window_size(3000, 1200)
+        
 
         #df = pd.DataFrame(columns=['Poste', 'Location', 'Compagny', 'Salary', 'Resume', 'Date'])
         driver.get('https://www.indeed.fr/')  # Aller sur le site
@@ -62,7 +62,7 @@ class Scrapper:
             driver.find_element_by_xpath('//*[@id="text-input-where"]').send_keys(Keys.BACKSPACE)  # effacer la localisation pré-ecrite
         driver.find_element_by_xpath('//*[@id="text-input-where"]').send_keys(self.localisation)  # Ecrire dans la barre de localisation
         driver.find_element_by_xpath('/html/body/div/div[2]/div[2]/div/form/div[3]/button').click()  # clicker sur rechercher
-        counter = 0
+        
         groupe = 1
         page = 0
         while True:
@@ -73,7 +73,7 @@ class Scrapper:
                 len(results)
                 for i in range(0, len(results)):
                     driver.execute_script("arguments[0].scrollIntoView();", results[i])
-                    counter += 1
+                    self.counter += 1
                     poste = results[i].find_element_by_class_name('jobtitle').text
                     poste_clikable = results[i].find_element_by_class_name('jobtitle') 
                     location = results[i].find_element_by_class_name('location').text
@@ -119,7 +119,7 @@ class Scrapper:
                             continu = input('Continuer')
                         else:
                             print(poste,' ajouté')
-                            self.db.add_db(line,counter)
+                            self.db.add_db(line,self.counter)
                             #df = df.append(line, ignore_index=True)
                 
                 time.sleep(1)
@@ -147,8 +147,9 @@ class Scrapper:
                     driver.find_element_by_xpath('//*[@id="popover-close-link"]').click()  # fermer popup
                 except:
                     pass
-            if counter > 20:
-                return True
+                if self.counter > 20:
+                    driver.close()
+                    return True
 
             try:
                 time.sleep(2)
@@ -181,6 +182,7 @@ def startThreads():
     for i in range(0,len(location_list)):
         threads['thread'+str(i)] = ScrapThread(i,metiers)
         threads['thread'+str(i)].start()
+    print(threads)
     return threads
         
 

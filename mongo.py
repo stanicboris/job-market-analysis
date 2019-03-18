@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import pandas as pd
+import re
 
 class Mongo():
 
@@ -36,5 +37,18 @@ class Mongo():
         self.db.drop_collection(self.col_name)
         
         for i in df.index:
-            self.collection2.insert_one(df.loc[i,:])
+            self.collection2.insert_one(dict(df.loc[i,:]))
         return True
+
+    def add_email(self,email):
+        collection = self.db['emails']
+        collection.insert_one({'mail':email})
+        return True
+
+    def check_mail(self,email):
+        if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",email):
+            return True
+        else:
+            return False
+
+
