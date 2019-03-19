@@ -128,8 +128,10 @@ class preprocessing():
             sal_min = int(sal[0])
             sal_max = int(sal[1])
             salary = (sal_min+sal_max)/2
-        else:
+        elif sal == 1:
             salary = int(sal[0])
+        else: 
+            salary = salary
 
         if frequency[0] == 'mois':
             salary = salary *12
