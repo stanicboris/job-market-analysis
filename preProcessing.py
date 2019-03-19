@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Wed Mar  6 11:13:19 2019
 
@@ -148,9 +146,11 @@ class preprocessing():
         
         """ Extrait le métier et le statut. Ex : Data Scientist / CDI """
 
+        # On enleve les majuscules pour le traitement du texte"
         poste = poste.lower()
         resume = resume.lower()
 
+        # Extraction d'informations pour classification
         postes = re.findall(r'(analyst|analyste|science|scientist|engineer|ingénieur)', poste)
         contrats = re.findall(r'(cdd|cdi|intern|stage|stagiaire|internship)', resume)
         
