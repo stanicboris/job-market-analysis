@@ -26,6 +26,22 @@ app.layout = html.Div(children=[
         id='example-graph',
         figure={
             'data': [
+                {'x': df['Bassin_emploi'], 'y': df['Salary'][df['Salary']<50000], 'type': 'bar', 'name': 'Semaine précédente'}
+            ],
+            'layout': {
+                'title': 'Répartition des offres d\'emploi'
+            }
+        }
+    ),
+        html.H1(children='Rapport Indeed'),
+
+    html.Div(children='''
+        Analyse de l'emploi à Paris, Lyon, Toulouse, Nantes et Bordeaux
+    '''),
+        dcc.Graph(
+        id='example-graph2',
+        figure={
+            'data': [
                 {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'Semaine précédente'},
                 {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Semaine actuelle'},
             ],
