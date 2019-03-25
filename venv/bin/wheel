@@ -1,4 +1,4 @@
-#!/home/zanea/Projets/job-market-analysis/venv/bin/python
+#!/home/zanea/Projets/job-market-analysis/venv/bin/python3.6
 # -*- coding: utf-8 -*-
 import re
 import sys
