@@ -34,6 +34,8 @@ port = 8000
 def index():
     print('request.method', request.method)
     print('request.json', request.json)
+    if request.method == 'POST':
+        return 'SUCCESSFULLY POSTED : ' + request.json
     # form = ButtonForm(request.form)
     # if form.validate_on_submit():
     #     if 'download' in request.form:
@@ -41,7 +43,7 @@ def index():
     #     elif 'watch' in request.form:
     #         print('watch')
     
-    return render_template('scripts.html', data={'host':host, 'port':port})
+    return render_template('scripts.html', server_info={'host':host, 'port':port})
 
 @app.route('/', methods=['POST'])
 def index_sub():

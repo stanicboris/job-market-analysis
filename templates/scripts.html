@@ -2,9 +2,18 @@
 {% block content %}
 {% include "header.html" %}
 
-<div class="col">
-    <input type="submit" name="download" value="Download" class="btn btn-danger">
-    <input type="submit" name="watch" value="Watch" class="btn btn-primary">
+<div class="row mt-5">
+    <div class="col">
+        <div class="row">
+            <div class="col">
+                <input type="submit" name="download" value="Download" class="btn btn-danger">
+                <input type="submit" name="watch" value="Watch" class="btn btn-primary">
+            </div>
+        </div>
+    
+        {% include "alert.html" %}
+        
+    </div>
 </div>
 <h4>Entrez votre email pour recevoir gratuitement un rapport hebdomadaire</h4>
 <form action='' method="POST">
