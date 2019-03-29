@@ -20,7 +20,7 @@ class Mongo():
         """ Ajoute une annonce à la DB. """
 
         self.collection.insert_one(line_to_add)
-        print('Annonce ', counter, ' added to DB  ')
+        #print('Annonce ', counter, ' added to DB  ')
 
     def check_db(self,line_to_check):
 

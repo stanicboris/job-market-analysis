@@ -19,8 +19,9 @@
 <form action='' method="POST">
     <input type="text" name="mail">
     <button type="submit">Submit</button>
+    <button type="button" onclick="create_alert('state','test')">Alert</button>
 </form>
-<!-- Display flash message --> 
+<!-- Display flash message 
 <section class="section--center mdl-grid mdl-grid--no-spacing">   
     <div id="flashmessage" class="flash">
       {% with messages = get_flashed_messages() %}
@@ -32,8 +33,9 @@
       </ul>
       {% endif %}
       {% endwith %}
-      <!-- Timeout flash message -->
-      <script>$('#flashmessage').fadeOut(3000);</script>
+       Timeout flash message 
+      <script>$('#flashmessage').fadeOut(3000);</script>-->
+              
     </div>
   </section>
 

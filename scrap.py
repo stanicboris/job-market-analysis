@@ -97,10 +97,19 @@ class Scrapper:
                         salary = ''
 
                     try:
-                        lien = results[i].find_element_by_class_name('jobtitle').get_attribute('href')
+                        
+                        lien = results[i].find_element_by_class_name('turnstileLink').get_attribute('href')
+                        if lien == None:
+                            print('Pas de lien !')
+                            continu = input('probleme de lien regarde la page')
                         r = requests.get(lien)
                         soup = BeautifulSoup(r.content)
-                        resume = soup.find("div", {"class":"jobsearch-JobComponent-description"}).text
+                        content = soup.find("div", {"class":"jobsearch-JobComponent-description"})
+                        resume = ''
+                        for elem in content.select("p,ul,li,ol"):
+                            resume = resume + ' ' + elem.text
+                        if resume == '':
+                            resume = content.text
                     except:
                         resume = ''
                         
@@ -108,8 +117,10 @@ class Scrapper:
 
                     date_scrap = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
 
-                    line = {'Poste': poste, 'Contrat':contrat, 'Location': location, 'Bassin_emploi':bassin, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume, 'Date': date,'Date_scrap':date_scrap}
+                    line = {'Poste': poste, 'Contrat':contrat, 'Location': location, 'Bassin_emploi':bassin, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume,'Lien':lien, 'Date': date,'Date_scrap':date_scrap}
 
+                    #TEST TEST TEST
+                    print('\n\n RESUME = ',resume,'\nLIEN = ',lien)
 
                     if self.db.check_db(line):
                         print('trouvé dans la Database, suivant !') 
@@ -118,7 +129,7 @@ class Scrapper:
                             print('Blank Line ',counter)
                             continu = input('Continuer')
                         else:
-                            print(poste,' ajouté')
+                            #print(poste,' ajouté')
                             self.db.add_db(line,self.counter)
                             #df = df.append(line, ignore_index=True)
                 
@@ -147,7 +158,8 @@ class Scrapper:
                     driver.find_element_by_xpath('//*[@id="popover-close-link"]').click()  # fermer popup
                 except:
                     pass
-                if self.counter > 20:
+
+                if self.counter > 800:
                     driver.close()
                     return True
 
@@ -187,7 +199,7 @@ def startThreads():
         
 
 
-
+startThreads()
 
 # df = pd.DataFrame(list(parisds.collection.find()))
 
