@@ -9,8 +9,11 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
 import pandas as pd
+import mongo
 
-df = pd.read_csv("indeed_v4.csv", sep=",", index_col='Unnamed: 0')
+db = mongo.Mongo()
+
+df = db.get_df()
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
