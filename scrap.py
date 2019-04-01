@@ -187,7 +187,7 @@ class ScrapThread (threading.Thread):
         scrappeur.scrap()
 
 
-def startThreads():
+def startThreads(location_list,metiers,email):
     location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpellier']
     metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
     threads = {}
@@ -197,9 +197,12 @@ def startThreads():
     print(threads)
     return threads
         
+location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpellier']
+metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
+email = 'anthony.93460@gmail.com'
+ 
 
-
-startThreads()
+# startThreads(location_list,metiers,email)
 
 # df = pd.DataFrame(list(parisds.collection.find()))
 
