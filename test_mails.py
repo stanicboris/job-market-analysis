@@ -2,7 +2,7 @@ import smtplib, ssl
 import getpass as gp
 
 port = 465  # For SSL
-password = gp.getpass("Type your password and press enter: ")
+password = 'indeed123data'
 
 # Create a secure SSL context
 context = ssl.create_default_context()
