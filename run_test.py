@@ -1,7 +1,14 @@
 import modeles
 import scrap
+import sys
 
-threads = scrap.startThreads() 
+args = sys.argv
+
+liste_location = list(map(str, args[1].strip('[]').split(',')))
+metiers = args[2]
+email = args[3]
+
+threads = scrap.startThreads(liste_location,metiers,email) 
 
 for i in range(0,len(threads)):
         threads['thread'+str(i)].join()

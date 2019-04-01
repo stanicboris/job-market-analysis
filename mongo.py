@@ -8,7 +8,7 @@ class Mongo():
 
         """ Connexion à la base de données. """
 
-        client = MongoClient('localhost', 27017)
+        client = MongoClient('mongodb://localhost:27017/')
         self.db = client.test_database
         self.col_name = 'indeed_v4_temp' # Table temporaire
         self.collection = self.db[self.col_name]

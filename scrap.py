@@ -49,7 +49,7 @@ class Scrapper:
         profile.set_preference("browser.cache.memory.enable", False)
         profile.set_preference("browser.cache.offline.enable", False)
         profile.set_preference("network.http.use-cache", False)
-        driver = webdriver.Firefox(profile, executable_path=r'C:\Users\antho\Documents\Python Scripts\geckodriver.exe')
+        driver = webdriver.Firefox(profile)
         
 
         #df = pd.DataFrame(columns=['Poste', 'Location', 'Compagny', 'Salary', 'Resume', 'Date'])
@@ -103,7 +103,7 @@ class Scrapper:
                             print('Pas de lien !')
                             continu = input('probleme de lien regarde la page')
                         r = requests.get(lien)
-                        soup = BeautifulSoup(r.content)
+                        soup = BeautifulSoup(r.content,features='html.parser')
                         content = soup.find("div", {"class":"jobsearch-JobComponent-description"})
                         resume = ''
                         for elem in content.select("p,ul,li,ol"):
@@ -188,8 +188,8 @@ class ScrapThread (threading.Thread):
 
 
 def startThreads(location_list,metiers,email):
-    location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpellier']
-    metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
+    #location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpellier']
+    #metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
     threads = {}
     for i in range(0,len(location_list)):
         threads['thread'+str(i)] = ScrapThread(i,metiers)
