@@ -134,11 +134,12 @@ class preprocessing():
             salary = salary
 
         if frequency[0] == 'mois':
-            salary = salary *12
+            salary = int(sal[0]) *12
         elif frequency[0] == 'jour' or frequency[0] == 'jours':
-            salary = salary * 365
+            salary = int(sal[0]) * 365
         elif frequency[0] == 'an' or frequency[0] == 'ans':
-            salary = salary
+            salary = int(sal[0])
+            
             
         # Integer
         return salary
