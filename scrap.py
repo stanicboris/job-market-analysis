@@ -174,12 +174,12 @@ class Scrapper:
 
 
 
-
+ 
 class ScrapThread (threading.Thread):
-    def __init__(self, n,metiers):
+    def __init__(self, n,metiers,locations):
         threading.Thread.__init__(self)
         self.n = n
-        self.location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpelier']
+        self.location_list = locations
         self.metiers = metiers
         
     def run(self):
@@ -193,14 +193,14 @@ def startThreads(location_list,metiers,email):
     #metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
     threads = {}
     for i in range(0,len(location_list)):
-        threads['thread'+str(i)] = ScrapThread(i,metiers)
+        threads['thread'+str(i)] = ScrapThread(i,metiers,location_list)
         threads['thread'+str(i)].start()
     print(threads)
     return threads
         
-location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpellier']
-metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
-email = 'anthony.93460@gmail.com'
+#location_list = ['Paris', 'Toulouse', 'Lyon', 'Nantes', 'Bordeaux', 'Montpellier']
+#metiers = 'data scientist , data analyst , data engineer , développeur , business intelligence'
+#email = 'anthony.93460@gmail.com'
  
 
 # startThreads(location_list,metiers,email)
