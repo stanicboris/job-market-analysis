@@ -54,6 +54,7 @@ class Scrapper:
 
         #df = pd.DataFrame(columns=['Poste', 'Location', 'Compagny', 'Salary', 'Resume', 'Date'])
         driver.get('https://www.indeed.fr/')  # Aller sur le site
+        time.sleep(1)
         driver.find_element_by_xpath('//*[@id="text-input-what"]').send_keys(self.metier)  # Ecrire dans la barre de recherche
         time.sleep(1)
         text = driver.find_element_by_xpath('//*[@id="text-input-where"]').get_attribute('value')  # prend le texte qui se met automatiquement dans la localisation

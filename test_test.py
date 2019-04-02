@@ -6,7 +6,8 @@ col_name = 'indeed_v4_temp' # Table temporaire
 collection = db[col_name]
 col_name2 = 'indeed_v4' # Table actualisée, contenant les nouvelles données des salaires
 collection2 = db[col_name2]
-collection.insert_one({'id':'bite'})
+collection.drop()
+#collection.insert_one({'id':'lol'})
 
 a = collection.find()
-print(a[0])
+print(list(a))
