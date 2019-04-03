@@ -1,8 +1,8 @@
 from crontab import CronTab
 
-cron = CronTab(user='username') 
+cron = CronTab(user='zanea') 
 
-job = cron.new(command="python test_test.py", comment='email@adress')
+job = cron.new(command="python test_cron.py argument de merde", comment='email@adress')
 
 job.minute.every(1)
 
