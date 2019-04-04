@@ -22,4 +22,4 @@ cond =  mod.run_models()
 
 if cond:
     print('Tout est ok ! T\'es trop fort Anthony')
-print('FIN')
+print('FIN') 

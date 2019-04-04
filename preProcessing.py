@@ -141,9 +141,10 @@ class preprocessing():
             salary = int(sal[0])
         elif frequency[0] == 'heure' or frequency[0] == 'heures':
             salary = int(sal[0]) * 24 * 365
-        elif frequency[0] == 'heure' or frequency[0] == 'heures':
+        elif frequency[0] == 'semaine' or frequency[0] == 'semaines':
             salary = int(sal[0]) * 4 * 12
-            
+        else:
+            salary = 0
             
         # Integer
         return salary
