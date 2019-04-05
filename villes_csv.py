@@ -1,8 +1,4 @@
-
-with open("bite.html","r") as myfile:
-    email_body=myfile.read()
-
-print(email_body)
+import pandas as pd 
 me  = 'indeed.data@gmail.com'
 recipient = 'darthmaul9@gmail.com'
 subject = 'Indeed Report'
@@ -22,12 +18,24 @@ msg['From'] = me
 msg['To'] = recipient
 msg['Subject'] = subject
 
+email_body = """ 
+<html>
+    <head>
+        <meta charset='utf-8'/>
+    </head>
+    <body>
+        <h1>BITE</h1
+    </body>
+</html>
+
+"""
+
 msg.attach(MIMEText(email_body, 'html'))
 
 
-server = smtplib.SMTP(email_server_host, port)
-server.ehlo()
-server.starttls()
-server.login(email_username, email_password)
-server.sendmail(me, recipient, msg.as_string())
-server.close()
+    server = smtplib.SMTP(email_server_host, port)
+    server.ehlo()
+    server.starttls()
+    server.login(email_username, email_password)
+    server.sendmail(me, recipient, msg.as_string())
+    server.close()
