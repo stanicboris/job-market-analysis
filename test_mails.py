@@ -4,7 +4,7 @@ with open("bite.html","r") as myfile:
 
 print(email_body)
 me  = 'indeed.data@gmail.com'
-recipient = 'darthmaul9@gmail.com'
+recipient = 'arnaud.chase@gmail.com'
 subject = 'Indeed Report'
 
 email_server_host = 'smtp.gmail.com'
