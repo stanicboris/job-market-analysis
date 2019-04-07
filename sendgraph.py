@@ -30,7 +30,7 @@ def moySalaireParVille(df):
     return df
 
 graph1 = moySalaireParVille(df)
-
+&
 graphs.append(graph1)
 
 #Fonction qui plot un graph de la moyenne des salaires par métier 
