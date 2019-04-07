@@ -1,6 +1,7 @@
 import modeles
 import scrap
 import sys
+import mongo
 
 args = sys.argv
 
@@ -17,6 +18,11 @@ print("fin du scraping")
 
 mod = modeles.Modele()
 cond =  mod.run_models()
+
+mongo = mongo.Mongo()
+
+df = mongo.get_df()
+
 
 
 

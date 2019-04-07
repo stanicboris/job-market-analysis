@@ -13,8 +13,8 @@ import plotly.graph_objs as go
 plotly.tools.set_credentials_file(username='masternono', api_key='GYUhjVOFUUtRYfjBq74Q')
 
 #import du dataset
-df = pd.read_csv('data/indeedv5.csv',index_col='Unnamed: 0')
-df2 = pd.read_csv('data/indeed4.csv',index_col='Unnamed: 0')
+df = pd.read_csv('indeed_v5.csv',index_col='Unnamed: 0')
+#df2 = pd.read_csv('data/indeed4.csv',index_col='Unnamed: 0')
 
 graphs = []
 
@@ -29,7 +29,7 @@ def moySalaireParVille(df):
 }, auto_open=True)
     return df
 
-graph1 = moySalaireParVille(df2)
+graph1 = moySalaireParVille(df)
 
 graphs.append(graph1)
 
@@ -90,7 +90,7 @@ for graph in graphs:
 display(HTML(email_body))
 
 me  = 'indeed.data@gmail.com'
-recipient = 'arnaud.chase@gmail.com'
+recipient = 'anthony.93460@gmail.com'
 subject = 'Indeed Report'
 
 email_server_host = 'smtp.gmail.com'
