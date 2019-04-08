@@ -8,10 +8,10 @@ class Cron():
 
         self.cron = CronTab('zanea')
 
-    def add_cron(self,email,locations,metiers):
+    def add_cron(self,locations,metiers,email):
 
-        job = self.cron.new(command="python3 /home/zanea/Projets/job-market-analysis/run_test.py " + locations + metiers  + email,comment=email)
-        job.days.every(1)
+        job = self.cron.new(command="python3 /home/zanea/Projets/job-market-analysis/run_test.py " + "'" + locations + "' '" + metiers  + "' '" + email + "'" + " > ./cron.log 2>&1" , comment=email)
+        job.hour.every(4)
         self.cron.write()
         return True
 
@@ -19,4 +19,4 @@ class Cron():
 
 instance = Cron()
 
-instance.add_cron('anthony.93460@gmail.com','paris','jardinier')
+instance.add_cron('[Paris,Nantes,Bordeaux,Toulouse,Lyon]','Data Scientist, Data Analyst, Data Engineer, Business intelligence','anthony.93460@gmail.com')
