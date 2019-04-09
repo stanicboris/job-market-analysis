@@ -6,14 +6,14 @@ class Cron():
 
         from crontab import CronTab
 
-        self.cron = CronTab('zanea')
+        self.cron = CronTab('zanea') 
 
     def add_cron(self,locations,metiers,email):
 
-        job = self.cron.new(command="python3 /home/zanea/Projets/job-market-analysis/run_test.py " + "'" + locations + "' '" + metiers  + "' '" + email + "'" + " > ./cron.log 2>&1" , comment=email)
+        job = self.cron.new(command="python3 /usr/local/bin/ipython /home/zanea/Projets/job-market-analysis/run_test.py " + "'" + locations + "' '" + metiers  + "' '" + email + "'" + " > /home/zanea/Projets/job-market-analysis/cron.log 2>&1" , comment=email)
         job.hour.every(4)
         self.cron.write()
-        return True
+        return True 
 
 
 

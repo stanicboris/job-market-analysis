@@ -34,41 +34,13 @@ class preprocessing():
 
         """ Extrait le code postal (pour l'IDF) ou la ville (pour les autres villes),
             puis le classe dans la catégorie 'Bassin_emploi' correspondante. """
+        import villes_csv
 
         location = location.lower()
-        # Extraction de la ville sans le code postal
-        ville = re.findall(r'([a-zA-Z ]*)(?= \()', location)
-        if len(ville) == 0:
-            ville = re.findall(r'(^[a-zA-Z ]*)', location)
-        ville = ville[0]
-        localisation = ''
-        # Boucle pour regrouper le bassin d'emploi parisien
-        for i in ['toulouse', 'nantes', 'bordeaux', 'montpellier', 'lyon']:
-            if ville == i:
-                localisation = ville
-                bassin_emploi = ville
-                break
-            else:
-                bassin_emploi = 'Ile-de-France'
-
-        if "Paris " in location:
-            localisation = "Paris"
-        elif "(95)" in location:
-            localisation = "Val d'Oise 95"
-        elif "(94)" in location:
-            localisation = "Val de Marne 94"
-        elif "(93)" in location:
-            localisation = "Seine-Saint-Denis 93"
-        elif "(92)" in location:
-            localisation = "Hauts-de-Seine 92"
-        elif "(91)" in location:
-            localisation = "Essonnes 91"
-        elif "(78)" in location:
-            localisation = "Yvelines 78"
-        elif "(77)" in location:
-            localisation = "Seine-et-Marne 77"
-        else:
-            localisation = ville
+        # Extraction de la ville et du le code postal
+        localisation = re.findall(r'(.*)\(', location)[0]
+        cp = int(re.findall(r'.* \(([0-9]*).*', location)[0])
+        bassin_emploi = villes_csv.get_circo(cp)
 
         return bassin_emploi , localisation
 

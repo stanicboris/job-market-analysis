@@ -49,9 +49,7 @@ class Mongo():
     
     def final_df(self,df):
 
-        """ Supprime la table temporaire quand la DB est traitée. """
-
-        self.db.drop_collection(self.col_name)
+        
         
         for i in df.index:
             self.collection2.insert_one(dict(df.loc[i,:]))

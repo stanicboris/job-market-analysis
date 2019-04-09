@@ -117,4 +117,4 @@ def send_rapport(df,email):
     server.login(email_username, email_password)
     server.sendmail(me, recipient, msg.as_string())
     server.close()
-
+    return True

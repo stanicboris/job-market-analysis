@@ -22,6 +22,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.firefox.options import Options
 import re
 import time
 from datetime import datetime , timedelta
@@ -31,6 +32,7 @@ import preProcessing as pp
 import mongo
 from bs4 import BeautifulSoup
 import requests
+
 
 class Scrapper:
     
@@ -49,7 +51,10 @@ class Scrapper:
         profile.set_preference("browser.cache.memory.enable", False)
         profile.set_preference("browser.cache.offline.enable", False)
         profile.set_preference("network.http.use-cache", False)
-        driver = webdriver.Firefox(profile)
+        options = Options()
+        options.headless = True
+
+        driver = webdriver.Firefox(profile,options=options)
         
 
         #df = pd.DataFrame(columns=['Poste', 'Location', 'Compagny', 'Salary', 'Resume', 'Date'])
@@ -95,7 +100,7 @@ class Scrapper:
                         salary = results[i].find_element_by_class_name('salary').text
                         salary = self.preprocess.process_salary(salary)
                     except:
-                        salary = ''
+                        salary = '' 
 
                     try:
                         
