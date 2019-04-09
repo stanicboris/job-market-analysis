@@ -213,7 +213,7 @@ def startThreads(location_list,metiers,email):
 
 # df = pd.DataFrame(list(parisds.collection.find()))
 
-# df.to_csv('indeed.csv')
+# df.to_csv('indeed_v6.csv')
 
 
 
