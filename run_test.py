@@ -1,6 +1,7 @@
 import modeles
 import scrap
 import sys
+import mongo
 
 args = sys.argv
 
@@ -18,8 +19,18 @@ print("fin du scraping")
 mod = modeles.Modele()
 cond =  mod.run_models()
 
+mongo = mongo.Mongo()
+df = mongo.get_df()
 
+import sendgraph
+
+sendgraph.send_rapport(df,email)
 
 if cond:
     print('Tout est ok ! T\'es trop fort Anthony')
-print('FIN') 
+
+
+print('FIN')
+
+
+# python run_test.py "[Paris,Nantes,Toulouse,Marseilles]" "Data scientist, Data engineer, developpeur" "anthony.93460@gmail.com"
