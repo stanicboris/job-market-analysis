@@ -36,7 +36,7 @@ class Mongo():
 
         """ Charge la DB temporaire en dataframe > utilisé dans le script 'modeles.py'. """
 
-        df = pd.DataFrame(list(self.collection2.find()))
+        df = pd.DataFrame(list(self.collection.find()))
         return df
     
     def add_prediction(self,idt,forest,rbf):

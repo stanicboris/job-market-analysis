@@ -126,7 +126,7 @@ class Scrapper:
                     line = {'Poste': poste, 'Contrat':contrat, 'Location': location, 'Bassin_emploi':bassin, 'Compagny': company_elem, 'Salary': salary, 'Resume': resume,'Lien':lien, 'Date': date,'Date_scrap':date_scrap}
 
                     #TEST TEST TEST
-                    print('\n\n RESUME = ',resume,'\nLIEN = ',lien)
+                    #print('\n\n RESUME = ',resume,'\nLIEN = ',lien)
 
                     if self.db.check_db(line):
                         print('trouvé dans la Database, suivant !') 
@@ -137,6 +137,7 @@ class Scrapper:
                         else:
                             #print(poste,' ajouté')
                             self.db.add_db(line,self.counter)
+                            print('New raw')
                             #df = df.append(line, ignore_index=True)
                 
                 time.sleep(1)
@@ -156,7 +157,7 @@ class Scrapper:
                 elif btn_list[0].text == '« Précédent':  # si il y a que précédent on est arrivé au bout
                     break
                 else:
-                    btn_list[0].click()  # cllicker sur suivant
+                    btn_list[0].click()  # clicker sur suivant
                     page +=1
 
                 try:

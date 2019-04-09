@@ -37,10 +37,17 @@ class preprocessing():
         import villes_csv
 
         location = location.lower()
-        # Extraction de la ville et du le code postal
-        localisation = re.findall(r'(.*)\(', location)[0]
-        cp = int(re.findall(r'.* \(([0-9]*).*', location)[0])
-        bassin_emploi = villes_csv.get_circo(cp)
+        try:
+            # Extraction de la ville et du le code postal
+            localisation = re.findall(r'(.*) \(?', location)[0]
+        except:
+            localisation = location
+
+        try:
+            cp = int(re.findall(r'.* \(([0-9]*).*', location)[0])
+            bassin_emploi = villes_csv.get_circo(cp)
+        except:
+            bassin_emploi = 'Inconnu'
 
         return bassin_emploi , localisation
 
