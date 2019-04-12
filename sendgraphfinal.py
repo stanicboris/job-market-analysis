@@ -154,6 +154,71 @@ def moySalParis(df):
 graph5 = moySalParis(df)
 graphs.append(graph5)
 
+# Calcul des moyenne des salaires des métiers par ville
+
+# Paris
+moyDevParis = df['Salary'][df['Poste'] == 'Dev'][df['Bassin_emploi'] == 'Ile-de-France'].mean()
+moyDSParis = df['Salary'][df['Poste'] == 'Data Scientist'][df['Bassin_emploi'] == 'Ile-de-France'].mean()
+moyDEParis = df['Salary'][df['Poste'] == 'Data Engineer'][df['Bassin_emploi'] == 'Ile-de-France'].mean()
+moyDAParis = df['Salary'][df['Poste'] == 'Data Analyst'][df['Bassin_emploi'] == 'Ile-de-France'].mean()
+
+# Nantes
+MoyDevNantes = df['Salary'][df['Poste'] == 'Dev'][df['Bassin_emploi'] == 'nantes'].mean()
+MoyDSNantes = df['Salary'][df['Poste'] == 'Data Scientist'][df['Bassin_emploi'] == 'nantes'].mean()
+MoyDENantes = df['Salary'][df['Poste'] == 'Data Engineer'][df['Bassin_emploi'] == 'nantes'].mean()
+MoyDANantes = df['Salary'][df['Poste'] == 'Data Analyst'][df['Bassin_emploi'] == 'nantes'].mean()
+
+# Toulouse
+moyDevToulouse = df['Salary'][df['Poste'] == 'Dev'][df['Bassin_emploi'] == 'toulouse'].mean()
+moyDSToulouse = df['Salary'][df['Poste'] == 'Data Scientist'][df['Bassin_emploi'] == 'toulouse'].mean()
+moyDEToulouse = df['Salary'][df['Poste'] == 'Data Engineer'][df['Bassin_emploi'] == 'toulouse'].mean()
+moyDAToulouse = df['Salary'][df['Poste'] == 'Data Analyst'][df['Bassin_emploi'] == 'toulouse'].mean()
+
+# Lyon
+moyDevLyon = df['Salary'][df['Poste'] == 'Dev'][df['Bassin_emploi'] == 'lyon'].mean()
+moyDSLyon = df['Salary'][df['Poste'] == 'Data Scientist'][df['Bassin_emploi'] == 'lyon'].mean()
+moyDELyon = df['Salary'][df['Poste'] == 'Data Engineer'][df['Bassin_emploi'] == 'lyon'].mean()
+moyDALyon = df['Salary'][df['Poste'] == 'Data Analyst'][df['Bassin_emploi'] == 'lyon'].mean()
+
+# Bordeaux
+moyDevBordeaux = df['Salary'][df['Poste'] == 'Dev'][df['Bassin_emploi'] == 'bordeaux'].mean()
+moyDSBordeaux = df['Salary'][df['Poste'] == 'Data Scientist'][df['Bassin_emploi'] == 'bordeaux'].mean()
+moyDEBordeaux = df['Salary'][df['Poste'] == 'Data Engineer'][df['Bassin_emploi'] == 'bordeaux'].mean()
+moyDABordeaux = df['Salary'][df['Poste'] == 'Data Analyst'][df['Bassin_emploi'] == 'bordeaux'].mean()
+
+# Essayons de plotter plusieurs graphes en même temps
+
+paris = go.Bar(
+    x=['Dev', 'Data Scientist', 'Data Analyst', 'Data Engineer'],
+    y=[moyDevParis, moyDSParis, moyDAParis, moyDEParis],
+    name='Paris'
+)
+nantes = go.Bar(
+    x=['Dev', 'Data Scientist', 'Data Analyst', 'Data Engineer'],
+    y=[MoyDevNantes, MoyDSNantes, MoyDANantes, MoyDENantes],
+    name='Nantes'
+)
+lyon = go.Bar(
+    x=['Dev', 'Data Scientist', 'Data Analyst', 'Data Engineer'],
+    y=["38000", "33000", "36000", "31000"],
+    name='lyon'
+)
+toulouse = go.Bar(
+    x=['Dev', 'Data Scientist', 'Data Analyst', 'Data Engineer'],
+    y=[moyDevToulouse, moyDSToulouse, moyDAToulouse, moyDEToulouse],
+    name='Toulouse'
+)
+data = [paris, nantes, lyon, toulouse]
+layout = go.Layout(
+    barmode='group'
+)
+
+fig = go.Figure(data=data, layout=layout)
+a = py.iplot(fig, filename='grouped-bar', auto_open=True)
+
+graph6 = a.resource
+graphs.append(graph6)
+
 from IPython.display import display, HTML
 
 template = (''
