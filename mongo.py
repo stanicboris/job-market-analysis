@@ -64,15 +64,53 @@ class Mongo():
         return True
 
     def check_mail(self,email):
-
         """ Regex qui récupère l'email. """
-
         if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",email):
             return True
-        else:
-            return False
+        return False
 
     def drop_collection(self):
         self.db.drop_collection(self.col_name)
         self.db.drop_collection(self.col_name2)
         return True
+
+    def add_user(self,email,password):
+        col_name = 'users' 
+        collection = self.db[col_name]
+        import random
+        hash_id = random.getrandbits(128)
+        collection.insert_one({'user_email':email, 'user_password':password, 'hash_id':hash_id})
+        
+    def check_user(self,email):
+        col_name = 'users' 
+        collection = self.db[col_name]
+        user = collection.find_one({'user_email':email})
+        if user:
+            return True
+        return False
+            
+    
+#DB = Mongo()
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+        
+
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
