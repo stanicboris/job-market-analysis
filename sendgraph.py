@@ -52,6 +52,46 @@ def RepartitionAnnonceParVille(df):
     url = py.plot([trace], filename='repartition des offres d\'emploi selon le bassin d\'emploi', auto_open=True)
     return url
 
+# Fonction qui plot des boxplot en fonction de la ville choisie
+ville = input("veuillez entrer une ville : ")
+
+def boxplotParVille(ville,df):
+    y0 = df['Salary'][df['Poste']=='Data Scientist'][df['Bassin_emploi']==ville]
+    y1 = df['Salary'][df['Poste']=='Dev'][df['Bassin_emploi']==ville]
+    y2 = df['Salary'][df['Poste']=='Data Analyst'][df['Bassin_emploi']==ville]
+    y3 = df['Salary'][df['Poste']=='Data Engineer'][df['Bassin_emploi']==ville]
+
+    box1 = go.Box(
+        y=y0,
+        name ='Data Scientist'
+    )
+
+    box2 = go.Box(
+        y=y1,
+        name ='Dev'
+    )
+
+    box3 = go.Box(
+        y=y2,
+        name ='Data Analyst'
+    )
+
+    box4 = go.Box(
+        y=y3,
+        name ='Data Engineer'
+    )
+
+    data = [box1,box2,box3,box4]
+
+    layout = go.Layout(
+        title = " Repartition des salaire en fonction des métiers"
+    )
+
+    fig = go.Figure(data=data,layout=layout)
+    boxplot = py.iplot(fig, filename = "Repartition des salaires en fonction des métiers",auto_open=True)
+    return boxplot.resource
+
+boxplotParVille(ville,df)
 
 def send_rapport(df,email):
 
@@ -66,6 +106,8 @@ def send_rapport(df,email):
     graph3 = RepartitionAnnonceParVille(df)
     graphs.append(graph3)
 
+    graph4 = boxplotParVille(ville, df)
+    graphs.append(graph4)
     from IPython.display import display, HTML
 
     template = (''
